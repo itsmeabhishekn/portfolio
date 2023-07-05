@@ -1,0 +1,39 @@
+.portfolio-section {
+  padding: 40px 0;
+}
+
+.card-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.skill-card {
+  width: 200px;
+  height: 120px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.skill-card:hover {
+  transform: translateY(-5px);
+}
+
+.skill-card .card-info {
+  color: #333333;
+  text-align: center;
+}
+
+.skill-card .title {
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  font-size: 18px;
+  margin: 0;
+}

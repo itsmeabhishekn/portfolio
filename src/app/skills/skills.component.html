@@ -1,0 +1,14 @@
+<app-navbar></app-navbar>
+
+<section class="portfolio-section">
+  <div class="container">
+  
+    <div class="card-gallery">
+      <div class="skill-card" *ngFor="let skill of skills">
+        <div class="card-info">
+          <p class="title">{{ skill }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

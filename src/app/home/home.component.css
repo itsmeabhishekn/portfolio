@@ -1,0 +1,80 @@
+/* Add your CSS styles here */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 40px;
+  }
+  
+  .title {
+    font-size: 40px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .subtitle {
+    font-size: 20px;
+    margin-top: 10px;
+  }
+  
+  main {
+    padding: 40px;
+  }
+  
+  section {
+    margin-bottom: 40px;
+  }
+  
+  h2 {
+    color: #333;
+  }
+  
+  .ulDisc {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+  
+  button.cta-button {
+    background-color: #ff6f00;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button.cta-button:hover {
+    background-color: #ff8f00;
+  }
+  
+  footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    /* Add responsive styles here */
+    .title {
+      font-size: 30px;
+    }
+  
+    .subtitle {
+      font-size: 18px;
+    }
+  
+    button.cta-button {
+      font-size: 14px;
+    }
+  }
+  

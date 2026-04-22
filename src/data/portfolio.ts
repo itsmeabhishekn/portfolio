@@ -129,7 +129,7 @@ export const education: EducationEntry[] = [
 
 export const contact = {
   email: "abhishekn4454@gmail.com",
-  phone: "+91 7559896375",
+  phone: "+91 **********",
 };
 
 export const social = {

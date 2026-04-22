@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --bg: #060607;
+  --bg-deep: #040405;
+  --surface: #0b0c0f;
+  --elevated: #111218;
+  --foreground: #ececf1;
+  --muted: #8b8f9c;
+  --border: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --border-strong: color-mix(in oklab, var(--foreground) 18%, transparent);
+  --accent: #5eead4;
+  --accent-dim: color-mix(in oklab, var(--accent) 55%, transparent);
+  --grid: color-mix(in oklab, var(--foreground) 6%, transparent);
+  --glow-1: color-mix(in oklab, var(--accent) 22%, transparent);
+  --glow-2: color-mix(in oklab, #6366f1 18%, transparent);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
 body {
-  background: var(--background);
+  background: var(--bg);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 35%, transparent);
+  color: var(--bg-deep);
 }

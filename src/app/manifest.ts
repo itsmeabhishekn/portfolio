@@ -1,0 +1,22 @@
+import type { MetadataRoute } from "next";
+import { site } from "@/data/portfolio";
+import { seo } from "@/lib/seo";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: `${site.name} — ${site.role}`,
+    short_name: site.name,
+    description: seo.description,
+    start_url: "/",
+    display: "standalone",
+    background_color: "#f4f6f8",
+    theme_color: "#0a6b60",
+    icons: [
+      {
+        src: "/icon",
+        sizes: "32x32",
+        type: "image/png",
+      },
+    ],
+  };
+}

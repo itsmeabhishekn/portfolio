@@ -13,6 +13,7 @@ export const site = {
   headline: "I design and ship reliable backend systems for product teams.",
   location: "India",
   availability: "Open to work",
+  url: "https://abhishekn.dev",
   resumeHref: "/Abhishe_N_SDE.pdf",
 };
 
@@ -145,7 +146,7 @@ export const education: EducationEntry[] = [
 ];
 
 export const about = {
-  body: "I'm Abhishek, a backend engineer focused on Node.js, NestJS, and distributed systems. I care about reliability, clear service boundaries, and APIs that stay calm under load — from event-driven flows to caching and deployment.",
+  body: "I'm Abhishek N, a backend engineer in India focused on Node.js, NestJS, and distributed systems. I care about reliability, clear service boundaries, and APIs that stay calm under load — from Kafka event flows to Redis caching and production deploys. Open to backend roles, platform work, and selected freelance systems projects.",
   stats: [
     { value: "3+", label: "Years experience" },
     { value: "3", label: "Product companies" },

@@ -5,3 +5,5 @@ package = "@netlify/plugin-nextjs"
 command = "npm run build"
 publish = ".next"
 
+[build.environment]
+  NEXT_PUBLIC_SITE_URL = "https://abhishekn.dev"

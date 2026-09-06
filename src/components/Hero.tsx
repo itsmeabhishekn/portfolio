@@ -70,6 +70,13 @@ export function Hero() {
             {site.headline}
           </motion.p>
 
+          <motion.p
+            variants={item}
+            className="mt-3 text-sm font-medium text-[var(--muted)]"
+          >
+            {site.location} · {site.availability}
+          </motion.p>
+
           <motion.div
             variants={item}
             className="mt-10 flex flex-wrap items-center gap-3"
@@ -90,7 +97,7 @@ export function Hero() {
             <a
               href={social.github}
               target="_blank"
-              rel="noreferrer"
+              rel="me noopener"
               className="transition-colors hover:text-[var(--foreground)]"
             >
               GitHub
@@ -98,7 +105,7 @@ export function Hero() {
             <a
               href={social.linkedin}
               target="_blank"
-              rel="noreferrer"
+              rel="me noopener"
               className="transition-colors hover:text-[var(--foreground)]"
             >
               LinkedIn

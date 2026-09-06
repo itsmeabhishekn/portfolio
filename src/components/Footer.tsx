@@ -11,7 +11,7 @@ export function Footer() {
           <a
             href={social.github}
             target="_blank"
-            rel="noreferrer"
+            rel="me noopener"
             className="transition-colors hover:text-[var(--foreground)]"
           >
             GitHub
@@ -19,7 +19,7 @@ export function Footer() {
           <a
             href={social.linkedin}
             target="_blank"
-            rel="noreferrer"
+            rel="me noopener"
             className="transition-colors hover:text-[var(--foreground)]"
           >
             LinkedIn

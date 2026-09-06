@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { navLinks } from "@/data/portfolio";
+import { navLinks, site } from "@/data/portfolio";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -17,7 +17,7 @@ export function Navbar() {
   }, []);
 
   const linkClass =
-    "text-[13px] font-medium tracking-wide text-[var(--muted)] transition-colors hover:text-[var(--foreground)]";
+    "text-sm text-[var(--muted)] transition-colors hover:text-[var(--foreground)]";
 
   return (
     <header
@@ -27,19 +27,18 @@ export function Navbar() {
           : "border-transparent bg-transparent"
       }`}
     >
-      <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a
           href="#hero"
-          className="group flex items-baseline gap-2 font-mono text-[13px] text-[var(--foreground)]"
+          className="font-display text-base font-semibold tracking-tight text-[var(--foreground)]"
         >
-          <span className="text-[var(--accent-dim)] opacity-80 transition-opacity group-hover:opacity-100">
-            ~
+          {site.name}
+          <span className="ml-2 hidden text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)] sm:inline">
+            {site.role}
           </span>
-          <span className="tracking-tight">abhishek.n</span>
-          <span className="hidden text-[var(--muted)] sm:inline">/portfolio</span>
         </a>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-7 md:flex">
           {navLinks.map((l) => (
             <a key={l.id} href={`#${l.id}`} className={linkClass}>
               {l.label}
@@ -49,7 +48,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--border)] text-[var(--foreground)] md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] text-[var(--foreground)] md:hidden"
           aria-expanded={open}
           aria-label="Toggle menu"
           onClick={() => setOpen((v) => !v)}
@@ -72,7 +71,7 @@ export function Navbar() {
                 <a
                   key={l.id}
                   href={`#${l.id}`}
-                  className="rounded-md px-3 py-2 text-sm text-[var(--muted)] hover:bg-[var(--elevated)] hover:text-[var(--foreground)]"
+                  className="rounded-lg px-3 py-2.5 text-sm text-[var(--muted)] hover:bg-[var(--elevated)] hover:text-[var(--foreground)]"
                   onClick={() => setOpen(false)}
                 >
                   {l.label}

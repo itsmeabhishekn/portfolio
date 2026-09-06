@@ -1,11 +1,20 @@
 export const navLinks = [
   { id: "about", label: "About" },
-  { id: "skills", label: "Skills" },
   { id: "experience", label: "Experience" },
   { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
   { id: "education", label: "Education" },
   { id: "contact", label: "Contact" },
 ] as const;
+
+export const site = {
+  name: "Abhishek N",
+  role: "Backend Engineer",
+  headline: "I design and ship reliable backend systems for product teams.",
+  location: "India",
+  availability: "Open to work",
+  resumeHref: "/Abhishe_N_SDE.pdf",
+};
 
 export type SkillGroup = {
   title: string;
@@ -37,32 +46,43 @@ export const skillGroups: SkillGroup[] = [
 
 export type ExperienceEntry = {
   company: string;
+  role?: string;
+  location?: string;
   period: string;
   highlights: string[];
 };
 
 export const experience: ExperienceEntry[] = [
   {
+    company: "ISPG",
+    role: "Full Stack Developer",
+    location: "Kerala, India",
+    period: "May 2025 – Feb 2026",
+    highlights: [
+      "Implemented JWT authentication and payment gateway integration to improve login reliability and transaction stability",
+      "Built and maintained the CRM backend with Odoo ERP integration, cutting manual updates by ~25%",
+      "Introduced Redis caching and query optimization, reducing database query times by 15–20%",
+      "Automated recurring work with cron jobs and notification services to improve operational reliability",
+    ],
+  },
+  {
     company: "Techgencia Private Limited",
     period: "Sep 2023 – Feb 2025",
     highlights: [
-      "Built soccer league application using Angular",
-      "Improved LCP by 20%",
-      "Built Node.js services for Firebase and Stripe",
-      "Reduced API latency by 30% using Redis",
-      "Configured MongoDB replica sets",
-      "Dockerized applications",
-      "Designed Kafka event-driven architecture",
+      "Reduced API latency ~30% with Redis caching on high-traffic paths",
+      "Designed Kafka-based event flows between services",
+      "Shipped Node.js integrations for Firebase and Stripe payments",
+      "Improved LCP ~20% on an Angular soccer league application",
+      "Configured MongoDB replica sets and Dockerized services for deployment",
     ],
   },
   {
     company: "NeST Digital",
     period: "Aug 2022 – Aug 2023",
     highlights: [
-      "Migrated legacy desktop app to Angular web app",
-      "Built NestJS backend APIs",
-      "Integrated Stripe and Kafka",
-      "Designed responsive Angular applications",
+      "Migrated a legacy desktop application to an Angular web app",
+      "Built NestJS APIs with Stripe and Kafka integrations",
+      "Delivered responsive Angular interfaces for production workflows",
     ],
   },
 ];
@@ -73,6 +93,7 @@ export type Project = {
   summary: string;
   stack: string[];
   architecture: string[];
+  href?: string;
 };
 
 export const featuredProjects: Project[] = [
@@ -91,13 +112,9 @@ export const featuredProjects: Project[] = [
       "Docker",
     ],
     architecture: [
-      "React frontend",
-      "Node microservices backend",
-      "AWS EC2 deployment",
-      "Kafka",
-      "Redis caching",
-      "Docker",
-      "Microservices Architecture",
+      "React frontend with Node microservices",
+      "Kafka for event-driven coordination",
+      "Redis caching and Dockerized deploy on AWS EC2",
     ],
   },
 ];
@@ -127,9 +144,20 @@ export const education: EducationEntry[] = [
   },
 ];
 
+export const about = {
+  body: "I'm Abhishek, a backend engineer focused on Node.js, NestJS, and distributed systems. I care about reliability, clear service boundaries, and APIs that stay calm under load — from event-driven flows to caching and deployment.",
+  stats: [
+    { value: "3+", label: "Years experience" },
+    { value: "3", label: "Product companies" },
+    { value: "Backend", label: "Primary focus" },
+  ],
+};
+
 export const contact = {
-  email: "abhishekn4454@gmail.com",
+  email: "codebyabhishekn@gmail.com",
   phone: "+91 **********",
+  blurb:
+    "Open to backend and platform roles. If you are building systems that need careful architecture, let's talk.",
 };
 
 export const social = {

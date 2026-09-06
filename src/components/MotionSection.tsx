@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion, type HTMLMotionProps } from "framer-motion";
+import { useHydrated } from "@/hooks/useHydrated";
 
 type MotionSectionProps = HTMLMotionProps<"section"> & {
   id?: string;
@@ -15,9 +16,13 @@ export function MotionSection({
   ...props
 }: MotionSectionProps) {
   const reduceMotion = useReducedMotion();
+  const hydrated = useHydrated();
 
   const variants = {
-    hidden: { opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 28 },
+    hidden: {
+      opacity: reduceMotion || !hydrated ? 1 : 0,
+      y: reduceMotion || !hydrated ? 0 : 24,
+    },
     visible: {
       opacity: 1,
       y: 0,
@@ -31,9 +36,9 @@ export function MotionSection({
     <motion.section
       id={id}
       className={className}
-      initial="hidden"
+      initial={hydrated ? "hidden" : false}
       whileInView="visible"
-      viewport={{ once: true, margin: "-12% 0px -8% 0px" }}
+      viewport={{ once: true, margin: "-10% 0px -8% 0px" }}
       variants={variants}
       {...props}
     >

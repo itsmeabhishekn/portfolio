@@ -1,89 +1,86 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Layers, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { useHydrated } from "@/hooks/useHydrated";
 import { MotionSection } from "@/components/MotionSection";
-import { SectionLabel } from "@/components/SectionLabel";
-import { ProjectArchitecture } from "@/components/ProjectArchitecture";
+import { SectionHeading } from "@/components/SectionLabel";
 import { contact, featuredProjects } from "@/data/portfolio";
 
-const caseStudyHref = `mailto:${contact.email}?subject=${encodeURIComponent(
-  "Case study: Delivery Management System",
-)}`;
-
 export function FeaturedProjects() {
+  const hydrated = useHydrated();
+
   return (
     <MotionSection
       id="projects"
-      className="border-b border-[var(--border)] py-20 sm:py-24"
+      className="border-b border-[var(--border)] py-20 sm:py-28"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <SectionLabel index="04" title="Featured work" />
+        <SectionHeading
+          eyebrow="Projects"
+          title="Production builds"
+          subtitle="Systems that made it past the whiteboard."
+        />
 
-        <div className="mt-12 space-y-10">
-          {featuredProjects.map((project, i) => (
-            <motion.article
-              key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={{
-                delay: i * 0.06,
-                duration: 0.55,
-                ease: [0.22, 1, 0.36, 1] as const,
-              }}
-              className="group grid gap-8 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 transition-colors hover:border-[var(--border-strong)] lg:grid-cols-[1.1fr_0.9fr] lg:p-8"
-            >
-              <div>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--elevated)] px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-[var(--muted)]">
-                      <Layers className="h-3 w-3 text-[var(--accent)]" />
-                      flagship
-                    </div>
-                    <h3 className="mt-4 text-2xl font-semibold tracking-tight text-[var(--foreground)]">
+        <div className="mt-14 grid gap-6">
+          {featuredProjects.map((project, i) => {
+            const href =
+              project.href ??
+              `mailto:${contact.email}?subject=${encodeURIComponent(
+                `Case study: ${project.title}`,
+              )}`;
+
+            return (
+              <motion.article
+                key={project.id}
+                initial={hydrated ? { opacity: 0, y: 16 } : false}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10%" }}
+                transition={{
+                  delay: hydrated ? i * 0.05 : 0,
+                  duration: 0.45,
+                  ease: [0.22, 1, 0.36, 1] as const,
+                }}
+                className="surface-card group p-6 sm:p-8"
+              >
+                <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="max-w-2xl">
+                    <h3 className="font-display text-2xl font-semibold tracking-tight text-[var(--foreground)]">
                       {project.title}
                     </h3>
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--muted)]">
+                    <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] sm:text-[15px]">
                       {project.summary}
                     </p>
+
+                    <ul className="mt-5 space-y-2 text-sm text-[var(--muted)]">
+                      {project.architecture.map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {project.stack.map((t) => (
+                        <span
+                          key={t}
+                          className="rounded-full bg-[var(--elevated)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)]"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {project.stack.map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full border border-[var(--border)] bg-[var(--bg-deep)] px-3 py-1 text-[11px] font-medium text-[var(--foreground)]"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                <ul className="mt-6 space-y-2 border-t border-[var(--border)] pt-6 font-mono text-[12px] text-[var(--muted)]">
-                  {project.architecture.map((line) => (
-                    <li key={line} className="flex gap-2">
-                      <span className="text-[var(--accent-dim)]">→</span>
-                      {line}
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-8">
                   <a
-                    href={caseStudyHref}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-[var(--accent)] transition-colors hover:text-[var(--foreground)]"
+                    href={href}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
                   >
-                    View Case Study
+                    View case study
                     <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </a>
                 </div>
-              </div>
-
-              <ProjectArchitecture title={project.title} />
-            </motion.article>
-          ))}
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </MotionSection>

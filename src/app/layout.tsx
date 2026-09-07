@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, JetBrains_Mono, Outfit } from "next/font/google";
-import { JsonLd } from "@/components/JsonLd";
 import { site } from "@/data/portfolio";
-import {
-  getSiteUrl,
-  isIndexable,
-  personJsonLd,
-  seo,
-  websiteJsonLd,
-} from "@/lib/seo";
+import { getSiteUrl, isIndexable, seo } from "@/lib/seo";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -107,8 +100,6 @@ export default function RootLayout({
       className={`${outfit.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full bg-[var(--bg)] font-[family-name:var(--font-body)] text-[var(--foreground)]">
-        <JsonLd data={personJsonLd(siteUrl)} />
-        <JsonLd data={websiteJsonLd(siteUrl)} />
         {children}
       </body>
     </html>

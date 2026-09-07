@@ -16,6 +16,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/htracker/"],
     },
     sitemap: `${url}/sitemap.xml`,
     host: url,

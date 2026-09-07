@@ -1,15 +1,20 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "@htracker/styles.css";
 
+export const viewport: Viewport = {
+  themeColor: "#f3eee4",
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
-  title: "Tracker",
-  description: "Private habit tracker",
+  title: "Habit Logs",
+  description: "Private habit dashboard",
   robots: { index: false, follow: false },
   alternates: { canonical: "/htracker/" },
   openGraph: {
     url: "/htracker/",
-    title: "Tracker",
-    description: "Private habit tracker",
+    title: "Habit Logs",
+    description: "Private habit dashboard",
   },
 };
 

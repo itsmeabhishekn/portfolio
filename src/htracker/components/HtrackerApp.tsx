@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
+import { ForgeDashboard } from "@htracker/components/ForgeDashboard";
 import { allowedEmail, htrackerPath, isConfigured } from "@htracker/lib/config";
-import { dayKey, lastSevenDays, weekdayLabel } from "@htracker/lib/dates";
+import { addDays, dayKey, monthStart } from "@htracker/lib/dates";
+import { XP_PER_CHECK } from "@htracker/lib/stats";
 import { getSupabase } from "@htracker/lib/supabase";
 import type { Checkin, Habit } from "@htracker/lib/types";
 
@@ -15,42 +17,60 @@ export function HtrackerApp() {
   const [session, setSession] = useState<Session | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
   const [checkins, setCheckins] = useState<Checkin[]>([]);
+  const [xp, setXp] = useState(0);
   const [message, setMessage] = useState("");
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
 
   const today = dayKey();
-  const week = useMemo(() => lastSevenDays(today), [today]);
 
   const load = useCallback(
     async (userId: string) => {
       if (!supabase) return;
 
-      const from = lastSevenDays(today)[0];
-      const [{ data: habitRows, error: habitError }, { data: checkinRows, error: checkinError }] =
-        await Promise.all([
-          supabase
-            .from("habits")
-            .select("*")
-            .eq("user_id", userId)
-            .eq("archived", false)
-            .order("sort_order", { ascending: true }),
-          supabase
-            .from("checkins")
-            .select("*")
-            .eq("user_id", userId)
-            .gte("day", from)
-            .lte("day", today),
-        ]);
+      const from = [addDays(today, -41), monthStart(today)].sort()[0];
+      const [
+        { data: habitRows, error: habitError },
+        { data: checkinRows, error: checkinError },
+        { count, error: countError },
+      ] = await Promise.all([
+        supabase
+          .from("habits")
+          .select("*")
+          .eq("user_id", userId)
+          .eq("archived", false)
+          .order("sort_order", { ascending: true }),
+        supabase
+          .from("checkins")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("day", from)
+          .lte("day", today),
+        supabase
+          .from("checkins")
+          .select("habit_id", { count: "exact", head: true })
+          .eq("user_id", userId),
+      ]);
 
-      if (habitError || checkinError) {
-        setMessage(habitError?.message ?? checkinError?.message ?? "Could not load.");
+      if (habitError || checkinError || countError) {
+        setMessage(
+          habitError?.message ??
+            checkinError?.message ??
+            countError?.message ??
+            "Could not load.",
+        );
         setStatus("error");
         return;
       }
 
       setHabits((habitRows ?? []) as Habit[]);
-      setCheckins((checkinRows ?? []) as Checkin[]);
+      setCheckins(
+        ((checkinRows ?? []) as Checkin[]).map((row) => ({
+          ...row,
+          day: String(row.day).slice(0, 10),
+        })),
+      );
+      setXp((count ?? 0) * XP_PER_CHECK);
       setStatus("ready");
     },
     [supabase, today],
@@ -70,6 +90,7 @@ export function HtrackerApp() {
       if (!next) {
         setHabits([]);
         setCheckins([]);
+        setXp(0);
         setStatus("guest");
         return;
       }
@@ -159,24 +180,14 @@ export function HtrackerApp() {
     await load(session.user.id);
   }
 
-  const checked = (habitId: string, day: string) =>
-    checkins.some((row) => row.habit_id === habitId && row.day === day);
-
   return (
     <main className="htr-page">
-      <header className="htr-header">
-        <p className="htr-kicker">Private</p>
-        <h1>Today</h1>
-        {session?.user.email ? (
-          <p className="htr-meta">{session.user.email}</p>
-        ) : null}
-      </header>
-
-      {status === "boot" ? <p className="htr-meta">Loading…</p> : null}
+      {status === "boot" ? <p className="htr-meta">Loading the board…</p> : null}
 
       {status === "setup" ? (
-        <section className="htr-card">
-          <h2>Supabase keys are missing</h2>
+        <section className="htr-gate">
+          <p className="htr-kicker">Habit Logs</p>
+          <h1>Supabase keys are missing</h1>
           <p>
             Copy <code>.env.example</code> to <code>.env.local</code>, paste your
             project URL and anon key, then restart <code>npm run dev</code>.
@@ -185,8 +196,10 @@ export function HtrackerApp() {
       ) : null}
 
       {status === "guest" ? (
-        <section className="htr-card">
-          <p>Sign in with the Google account you allowlisted in Supabase.</p>
+        <section className="htr-gate">
+          <p className="htr-kicker">Habit Logs</p>
+          <h1>Continue your run</h1>
+          <p>Sign in with the Google account on the allowlist.</p>
           <button className="htr-btn" type="button" onClick={() => void signIn()} disabled={busy}>
             Continue with Google
           </button>
@@ -194,13 +207,12 @@ export function HtrackerApp() {
       ) : null}
 
       {status === "blocked" ? (
-        <section className="htr-card">
-          <h2>This account is not allowed</h2>
+        <section className="htr-gate">
+          <p className="htr-kicker">Locked</p>
+          <h1>This account is not allowed</h1>
           <p>
-            Signed in as {session?.user.email}. Add that address to{" "}
-            <code>htracker_allowlist</code> and{" "}
-            <code>NEXT_PUBLIC_HTRACKER_ALLOWED_EMAIL</code>, or switch Google
-            accounts.
+            Signed in as {session?.user.email}. Add that address to the allowlist,
+            or switch Google accounts.
           </p>
           <button className="htr-btn htr-btn-ghost" type="button" onClick={() => void signOut()}>
             Sign out
@@ -209,8 +221,9 @@ export function HtrackerApp() {
       ) : null}
 
       {status === "error" ? (
-        <section className="htr-card">
-          <h2>Something broke</h2>
+        <section className="htr-gate">
+          <p className="htr-kicker">Error</p>
+          <h1>The board failed to load</h1>
           <p>{message || "Check the browser console and your Supabase SQL."}</p>
           <button className="htr-btn htr-btn-ghost" type="button" onClick={() => void signOut()}>
             Sign out
@@ -218,65 +231,22 @@ export function HtrackerApp() {
         </section>
       ) : null}
 
-      {status === "ready" ? (
-        <>
-          {habits.length === 0 ? (
-            <p className="htr-meta">Add one habit you will actually do.</p>
-          ) : (
-            <ul className="htr-list">
-              {habits.map((habit) => (
-                <li key={habit.id} className="htr-habit">
-                  <button
-                    className={`htr-check ${checked(habit.id, today) ? "is-on" : ""}`}
-                    type="button"
-                    aria-pressed={checked(habit.id, today)}
-                    onClick={() => void toggle(habit.id, today)}
-                  >
-                    {checked(habit.id, today) ? "Done" : "Mark"}
-                  </button>
-                  <div>
-                    <p className="htr-name">{habit.name}</p>
-                    <ol className="htr-week">
-                      {week.map((day) => (
-                        <li key={day}>
-                          <button
-                            className={`htr-dot ${checked(habit.id, day) ? "is-on" : ""}`}
-                            type="button"
-                            title={day}
-                            aria-label={`${habit.name} ${day}`}
-                            onClick={() => void toggle(habit.id, day)}
-                          >
-                            {weekdayLabel(day).slice(0, 1)}
-                          </button>
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <form className="htr-add" onSubmit={(event) => void addHabit(event)}>
-            <input
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="New habit"
-              maxLength={40}
-              aria-label="New habit"
-            />
-            <button className="htr-btn" type="submit" disabled={busy || !draft.trim()}>
-              Add
-            </button>
-          </form>
-
-          <button className="htr-signout" type="button" onClick={() => void signOut()}>
-            Sign out
-          </button>
-        </>
+      {status === "ready" && session?.user.email ? (
+        <ForgeDashboard
+          email={session.user.email}
+          today={today}
+          habits={habits}
+          checkins={checkins}
+          xp={xp}
+          draft={draft}
+          busy={busy}
+          message={message}
+          onDraft={setDraft}
+          onAdd={(event) => void addHabit(event)}
+          onToggle={(habitId, day) => void toggle(habitId, day)}
+          onSignOut={() => void signOut()}
+        />
       ) : null}
-
-      {message && status === "ready" ? <p className="htr-meta">{message}</p> : null}
     </main>
   );
 }

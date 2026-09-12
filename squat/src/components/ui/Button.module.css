@@ -29,6 +29,10 @@
   background: var(--color-accent-hover);
 }
 
+.button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
 .secondary {
   background: var(--color-surface-2);
   color: var(--color-text);

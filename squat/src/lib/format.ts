@@ -19,6 +19,26 @@ export function formatDate(iso: string): string {
   }).format(new Date(iso));
 }
 
+export function formatRelativeDate(iso: string, now = new Date()): string {
+  const date = new Date(iso);
+  const startToday = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const startThat = Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  );
+  const diffDays = Math.round((startToday - startThat) / 86_400_000);
+
+  if (diffDays === 0) {
+    return "Today";
+  }
+  if (diffDays === 1) {
+    return "Yesterday";
+  }
+
+  return formatDate(iso);
+}
+
 export function greetingForHour(hour: number): string {
   if (hour < 12) {
     return "Good morning";

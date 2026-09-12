@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface AsyncState<T> {
   data: T | null;
   error: Error | null;
   loading: boolean;
+  reload: () => void;
 }
 
 interface Result<T> {
@@ -17,6 +18,8 @@ export function useAsyncValue<T>(
   key = "default",
 ): AsyncState<T> {
   const loaderRef = useRef(loader);
+  const [nonce, setNonce] = useState(0);
+  const requestKey = `${key}:${nonce}`;
   const [result, setResult] = useState<Result<T>>({
     key: "",
     data: null,
@@ -34,27 +37,32 @@ export function useAsyncValue<T>(
       .current()
       .then((data) => {
         if (!cancelled) {
-          setResult({ key, data, error: null });
+          setResult({ key: requestKey, data, error: null });
         }
       })
       .catch((caught: unknown) => {
         if (!cancelled) {
           const error =
             caught instanceof Error ? caught : new Error("Something went wrong.");
-          setResult({ key, data: null, error });
+          setResult({ key: requestKey, data: null, error });
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [key]);
+  }, [requestKey]);
 
-  const loading = result.key !== key;
+  const reload = useCallback(() => {
+    setNonce((value) => value + 1);
+  }, []);
+
+  const loading = result.key !== requestKey;
 
   return {
     data: loading ? null : result.data,
     error: loading ? null : result.error,
     loading,
+    reload,
   };
 }

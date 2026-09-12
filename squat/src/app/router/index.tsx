@@ -33,7 +33,9 @@ export const router = createBrowserRouter(
         {
           path: "dashboard",
           lazy: async () => {
-            const { DashboardPage } = await import("@/pages/DashboardPage");
+            const { DashboardPage } = await import(
+              "@/features/dashboard/DashboardPage"
+            );
             return { Component: DashboardPage };
           },
         },
@@ -54,7 +56,9 @@ export const router = createBrowserRouter(
         {
           path: "workouts/:workoutId",
           lazy: async () => {
-            const { WorkoutTemplatePage } = await import("@/pages/WorkoutPages");
+            const { WorkoutTemplatePage } = await import(
+              "@/features/workouts/WorkoutTemplatePage"
+            );
             return { Component: WorkoutTemplatePage };
           },
         },

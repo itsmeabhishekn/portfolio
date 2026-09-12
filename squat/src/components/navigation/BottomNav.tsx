@@ -19,8 +19,14 @@ const icons: Record<NavKey, typeof HomeIcon> = {
   profile: ProfileIcon,
 };
 
-export function BottomNav({ activeSessionId }: { activeSessionId: string }) {
-  const items = getPrimaryNav(activeSessionId);
+export function BottomNav({
+  activeSessionId,
+  upcomingWorkoutId,
+}: {
+  activeSessionId: string | null;
+  upcomingWorkoutId: string | null;
+}) {
+  const items = getPrimaryNav(activeSessionId, upcomingWorkoutId);
 
   return (
     <nav className={`glass ${styles.nav}`} aria-label="Primary">

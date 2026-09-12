@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { Spinner } from "@/components/feedback/Spinner";
 import { Badge, Card, PageHeader } from "@/components/ui";
-import { formatRepTarget } from "@/lib/format";
 import { useAsyncValue } from "@/hooks/useAsyncValue";
 import { api } from "@/services/api";
 import { cx } from "@/lib/cx";
@@ -85,54 +84,6 @@ export function WorkoutSessionPage() {
               </div>
             ))}
           </div>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
-export function WorkoutTemplatePage() {
-  const { workoutId } = useParams();
-  const { data, error, loading } = useAsyncValue(() => {
-    if (!workoutId) {
-      return Promise.reject(new Error("Missing workout."));
-    }
-    return Promise.all([
-      api.workouts.getWorkout(workoutId),
-      api.workouts.listWorkoutExercises(workoutId),
-    ]).then(async ([workout, items]) => {
-      const details = await Promise.all(
-        items.map(async (item) => ({
-          item,
-          exercise: await api.exercises.getExercise(item.exerciseId),
-        })),
-      );
-      return { workout, details };
-    });
-  }, workoutId ?? "missing-workout");
-
-  if (loading) {
-    return <Spinner label="Loading template" />;
-  }
-
-  if (error || !data) {
-    return <p className={styles.error}>{error?.message ?? "Workout not found."}</p>;
-  }
-
-  return (
-    <div className={styles.stack}>
-      <PageHeader
-        eyebrow="Template"
-        title={data.workout.name}
-        description={data.workout.notes ?? "Planned workout, not a logged session."}
-      />
-      {data.details.map(({ item, exercise }) => (
-        <Card key={item.id}>
-          <h2 className="t-exercise">{exercise.name}</h2>
-          <p className="t-secondary">
-            {item.targetSets} × {formatRepTarget(item.targetReps)}
-            {item.targetWeightKg != null ? ` · ${item.targetWeightKg} kg` : ""}
-          </p>
         </Card>
       ))}
     </div>

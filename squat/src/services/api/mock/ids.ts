@@ -1,0 +1,15 @@
+export const ids = {
+  user: "user-alex",
+  program: "program-ppl",
+  workoutPush: "workout-push-a",
+  workoutPull: "workout-pull-a",
+  workoutLegs: "workout-legs-a",
+  exerciseBench: "ex-bench",
+  exerciseOhp: "ex-ohp",
+  exerciseRow: "ex-row",
+  exerciseSquat: "ex-squat",
+  exerciseRdl: "ex-rdl",
+  exercisePullup: "ex-pullup",
+  sessionCurrent: "session-today",
+  sessionRecent: "session-recent",
+} as const;

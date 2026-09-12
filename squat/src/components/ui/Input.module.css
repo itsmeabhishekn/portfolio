@@ -1,0 +1,44 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font: var(--text-meta);
+}
+
+.input {
+  min-height: var(--touch);
+  width: 100%;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.input:disabled {
+  opacity: 0.6;
+}
+
+.numberWrap {
+  display: grid;
+  grid-template-columns: var(--touch) 1fr var(--touch);
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.step {
+  width: var(--touch);
+  height: var(--touch);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.suffix {
+  font: var(--text-meta);
+}

@@ -24,6 +24,12 @@ export function Footer() {
           >
             LinkedIn
           </a>
+          <a
+            href="/squat/"
+            className="transition-colors hover:text-[var(--foreground)]"
+          >
+            to squat
+          </a>
         </div>
       </div>
     </footer>

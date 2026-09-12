@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { ForgeDashboard } from "@htracker/components/ForgeDashboard";
-import { allowedEmail, htrackerPath, isConfigured } from "@htracker/lib/config";
+import { allowedEmail, htrackerRedirectUrl, isConfigured } from "@htracker/lib/config";
 import { addDays, dayKey, monthStart } from "@htracker/lib/dates";
 import { XP_PER_CHECK } from "@htracker/lib/stats";
 import { getSupabase } from "@htracker/lib/supabase";
@@ -112,7 +112,7 @@ export function HtrackerApp() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}${htrackerPath}`,
+        redirectTo: htrackerRedirectUrl(),
         queryParams: { prompt: "select_account" },
       },
     });
@@ -197,7 +197,7 @@ export function HtrackerApp() {
 
       {status === "guest" ? (
         <section className="htr-gate">
-          <p className="htr-kicker">Habit Logs</p>
+          <p className="htr-kicker">Habit Logsa</p>
           <h1>Continue your run</h1>
           <p>Sign in with the Google account on the allowlist.</p>
           <button className="htr-btn" type="button" onClick={() => void signIn()} disabled={busy}>

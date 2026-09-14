@@ -1,0 +1,34 @@
+services:
+  squat-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    image: squat-api:latest
+    container_name: squat-api
+    env_file:
+      - .env
+    # Loopback only. Session tokens travel in an Authorization header, so the API
+    # must not be reachable over plain HTTP from the internet. Terminate HTTPS in a
+    # reverse proxy on the host and forward to 127.0.0.1:3001.
+    ports:
+      - "127.0.0.1:3001:3001"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    image: squat-api-migrate:latest
+    env_file:
+      - .env
+    profiles:
+      - migrate
+    restart: "no"

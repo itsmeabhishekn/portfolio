@@ -1,8 +1,6 @@
 import { apiRequest } from "@/services/api/client";
 import { parseWorkoutDetail, type WorkoutDetail } from "@/services/api/map";
-import * as mock from "@/services/api/mock/runtime";
 import { workouts } from "@/services/api/mock/data";
-import { isMockApi } from "@/services/api/mode";
 import type { Workout, WorkoutExercise } from "@/types/domain";
 
 export type { WorkoutDetail };
@@ -14,18 +12,12 @@ export function listWorkouts(): Promise<readonly Workout[]> {
 export async function getWorkoutDetail(
   workoutId: string,
 ): Promise<WorkoutDetail> {
-  if (isMockApi()) {
-    return mock.getWorkoutDetail(workoutId);
-  }
   return apiRequest(`/workouts/${workoutId}`, {
     parse: parseWorkoutDetail,
   });
 }
 
 export async function getUpcomingWorkoutDetail(): Promise<WorkoutDetail | null> {
-  if (isMockApi()) {
-    return mock.getUpcomingWorkoutDetail();
-  }
   return apiRequest("/workouts/upcoming", {
     parse: parseWorkoutDetail,
     notFoundValue: null,

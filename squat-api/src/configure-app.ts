@@ -7,7 +7,12 @@ export function configureApp(app: INestApplication): void {
     process.env.CORS_ORIGINS ?? 'http://localhost:5173',
   );
 
-  app.enableCors({ origin: corsOrigins });
+  app.enableCors({
+    origin: corsOrigins,
+    methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Accept', 'Content-Type', 'Authorization'],
+    maxAge: 86400,
+  });
   app.setGlobalPrefix('api/v1', {
     exclude: [
       { path: 'health', method: RequestMethod.ALL },
@@ -26,9 +31,10 @@ export function configureApp(app: INestApplication): void {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Squat API')
     .setDescription(
-      'Fitness tracking API. Requests currently run as the seeded development user.',
+      'Fitness tracking API. Sign in at POST /api/v1/auth/google, then send the returned token as a bearer token.',
     )
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

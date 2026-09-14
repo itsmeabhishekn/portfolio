@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/feedback/Spinner";
 import { LoadError } from "@/components/feedback/LoadError";
 import { firstName, greetingForHour } from "@/lib/format";
 import { useAsyncValue } from "@/hooks/useAsyncValue";
+import { useAuth } from "@/hooks/useAuth";
 import { loadDashboard } from "@/features/dashboard/loadDashboard";
 import { ProgressSnapshot } from "@/features/dashboard/ProgressSnapshot";
 import { RecentWorkout } from "@/features/dashboard/RecentWorkout";
@@ -22,6 +23,7 @@ function DashboardSkeleton() {
 }
 
 export function DashboardPage() {
+  const { user } = useAuth();
   const { data, error, loading, reload } = useAsyncValue(loadDashboard);
 
   if (loading) {
@@ -43,7 +45,8 @@ export function DashboardPage() {
     <div className={styles.page}>
       <header className={styles.intro}>
         <p className={styles.greeting}>
-          {greetingForHour(new Date().getHours())}, {firstName(data.user.displayName)}
+          {greetingForHour(new Date().getHours())}
+          {user ? `, ${firstName(user.displayName)}` : ""}
         </p>
         <p className={styles.prompt}>Ready for your next workout?</p>
       </header>

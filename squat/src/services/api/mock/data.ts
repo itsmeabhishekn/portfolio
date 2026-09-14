@@ -6,19 +6,10 @@ import type {
   PersonalRecord,
   Program,
   SessionExercise,
-  User,
   Workout,
   WorkoutExercise,
   WorkoutSession,
 } from "@/types/domain";
-
-export const currentUser: User = {
-  id: ids.user,
-  displayName: "Alex Rivera",
-  email: "alex@squat.app",
-  unit: "kg",
-  themePreference: "system",
-};
 
 export const exercises: readonly Exercise[] = [
   {

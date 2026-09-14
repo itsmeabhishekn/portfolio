@@ -1,7 +1,6 @@
 export const paths = {
   root: "/",
   login: "/login",
-  register: "/register",
   dashboard: "/dashboard",
   programs: "/programs",
   program: (programId: string) => `/programs/${programId}`,

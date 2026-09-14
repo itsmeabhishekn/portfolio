@@ -50,8 +50,6 @@ export interface User {
   id: string;
   displayName: string;
   email: string;
-  unit: WeightUnit;
-  themePreference: ThemePreference;
 }
 
 export interface Exercise {

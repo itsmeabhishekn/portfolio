@@ -4,9 +4,10 @@ import {
   PrismaClient,
   WorkoutSessionStatus,
 } from '@prisma/client';
-import { hash } from 'bcryptjs';
-import { basename } from 'node:path';
-import { seedIds } from './seed-ids.js';
+import { seedIds } from './ids.js';
+
+// Test fixtures only. Real users and their starter programs are created by
+// Google sign-in, so there is no production seed and this never runs against RDS.
 
 const ids = {
   user: seedIds.user,
@@ -51,14 +52,12 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.user.deleteMany();
   await prisma.exercise.deleteMany();
 
-  const passwordHash = await hash('dev-password-not-for-production', 10);
-
   await prisma.user.create({
     data: {
       id: ids.user,
-      email: 'alex@squat.app',
+      googleSub: 'google-sub-fixture-alex',
+      email: 'alex@squat.test',
       displayName: 'Alex Rivera',
-      passwordHash,
     },
   });
 
@@ -429,24 +428,5 @@ async function createCompletedSession(
         })),
       },
     },
-  });
-}
-
-async function runCli(): Promise<void> {
-  const prisma = new PrismaClient();
-  try {
-    await seedDatabase(prisma);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-
-const invokedDirectly =
-  process.argv[1] !== undefined && basename(process.argv[1]).includes('seed');
-
-if (invokedDirectly) {
-  runCli().catch((error: unknown) => {
-    console.error(error);
-    process.exit(1);
   });
 }

@@ -15,7 +15,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser } from '../current-user/current-user.decorator.js';
-import type { AuthenticatedUser } from '../current-user/current-user.service.js';
+import type { AuthenticatedUser } from '../current-user/authenticated-user.js';
 import { UpdateSetDto } from './dto/update-set.dto.js';
 import { WorkoutSessionResponseDto } from './dto/session-response.dto.js';
 import { WorkoutSessionsService } from './workout-sessions.service.js';

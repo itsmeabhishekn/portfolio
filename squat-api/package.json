@@ -18,22 +18,19 @@
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch --config ./jest.config.ts --testMatch '<rootDir>/src/**/*.spec.ts'",
     "test:e2e": "NODE_OPTIONS=--experimental-vm-modules jest --config ./jest.config.ts --testMatch '<rootDir>/test/**/*.e2e-spec.ts' --runInBand",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "prisma db seed"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.0",
     "@nestjs/core": "^12.0.1",
+    "@nestjs/jwt": "^12.0.1",
     "@nestjs/platform-express": "^12.0.1",
     "@nestjs/swagger": "^12.0.1",
     "@prisma/client": "^6.16.3",
-    "bcryptjs": "^3.0.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
+    "google-auth-library": "^11.0.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -41,7 +38,6 @@
     "@nestjs/cli": "^12.0.0",
     "@nestjs/schematics": "^12.0.0",
     "@nestjs/testing": "^12.0.1",
-    "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",

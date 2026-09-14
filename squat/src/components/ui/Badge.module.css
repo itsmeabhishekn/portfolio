@@ -1,0 +1,25 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 1.5rem;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-full);
+  font: var(--text-meta);
+  letter-spacing: 0.04em;
+}
+
+.neutral {
+  background: var(--color-surface-2);
+  color: var(--color-text-secondary);
+}
+
+.accent {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.success {
+  background: var(--color-accent-soft);
+  color: var(--color-success);
+}

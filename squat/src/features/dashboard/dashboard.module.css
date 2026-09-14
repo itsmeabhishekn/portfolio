@@ -1,0 +1,98 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.greeting {
+  font: var(--text-page-title);
+  letter-spacing: -0.03em;
+}
+
+.prompt {
+  font: var(--text-secondary);
+  color: var(--color-text-secondary);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.kicker {
+  font: var(--text-meta);
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+}
+
+.heroName {
+  font: var(--text-page-title);
+  letter-spacing: -0.04em;
+}
+
+.heroMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.heroStats {
+  color: var(--color-text-secondary);
+}
+
+.recent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.recentTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6) var(--space-4);
+}
+
+.metricValue {
+  margin-top: var(--space-2);
+  font: var(--text-exercise);
+  font-variant-numeric: tabular-nums;
+}
+
+.delta {
+  color: var(--color-accent);
+  font: var(--text-meta);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.empty {
+  color: var(--color-text-secondary);
+}
+
+.skeletonStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}

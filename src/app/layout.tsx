@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans, JetBrains_Mono, Outfit } from "next/font/google";
 import { site } from "@/data/portfolio";
 import { getSiteUrl, isIndexable, seo } from "@/lib/seo";
@@ -21,6 +21,12 @@ const jetbrainsMono = JetBrains_Mono({
 
 const siteUrl = getSiteUrl();
 const indexable = isIndexable();
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

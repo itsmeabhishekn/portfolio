@@ -1,0 +1,203 @@
+import { apiRequest, notFound } from "@/services/api/client";
+import { parseSessionDetail, type SessionDetail } from "@/services/api/map";
+import * as mock from "@/services/api/mock/runtime";
+import { getUpcomingWorkoutDetail } from "@/services/api/workouts";
+import { exercises } from "@/services/api/mock/data";
+import { store } from "@/services/api/mock/store";
+import { isMockApi } from "@/services/api/mode";
+import type {
+  PerformedSet,
+  SessionExercise,
+  WorkoutHistoryItem,
+  WorkoutSession,
+} from "@/types/domain";
+
+export type { SessionDetail };
+
+const sessionCache = new Map<string, SessionDetail>();
+
+function historyFromStore(): readonly WorkoutHistoryItem[] {
+  const completed = store.sessions
+    .filter((session) => session.status === "completed")
+    .slice()
+    .sort((a, b) => b.startedAt.localeCompare(a.startedAt));
+
+  return completed.map((session) => {
+    const sessionExs = store.sessionExercises.filter(
+      (item) => item.sessionId === session.id,
+    );
+    const exerciseNames = sessionExs.map((item) => {
+      const exercise = exercises.find((entry) => entry.id === item.exerciseId);
+      return exercise?.name ?? "Exercise";
+    });
+    const sets = store.performedSets.filter((set) =>
+      sessionExs.some((item) => item.id === set.sessionExerciseId),
+    );
+    const volumeKg = sets.reduce((sum, set) => {
+      if (!set.completed || set.weightKg == null || set.reps == null) {
+        return sum;
+      }
+      return sum + set.weightKg * set.reps;
+    }, 0);
+
+    return {
+      session,
+      exerciseNames,
+      volumeKg,
+      setCount: sets.filter((set) => set.completed).length,
+    };
+  });
+}
+
+function cacheSession(detail: SessionDetail): SessionDetail {
+  sessionCache.set(detail.session.id, detail);
+  return detail;
+}
+
+export async function getSessionDetail(
+  sessionId: string,
+): Promise<SessionDetail> {
+  const detail = isMockApi()
+    ? await mock.getSessionDetail(sessionId)
+    : await apiRequest(`/workout-sessions/${sessionId}`, {
+        parse: parseSessionDetail,
+      });
+  return cacheSession(detail);
+}
+
+export async function getInProgressForWorkout(
+  workoutId: string,
+): Promise<WorkoutSession | null> {
+  if (isMockApi()) {
+    const session = await mock.getInProgressForWorkout(workoutId);
+    if (!session) {
+      return null;
+    }
+    return cacheSession(await mock.getSessionDetail(session.id)).session;
+  }
+  const detail = await apiRequest(
+    `/workouts/${workoutId}/sessions/in-progress`,
+    {
+      parse: parseSessionDetail,
+      notFoundValue: null,
+    },
+  );
+  if (!detail) {
+    return null;
+  }
+  return cacheSession(detail).session;
+}
+
+export async function startWorkout(workoutId: string): Promise<WorkoutSession> {
+  if (isMockApi()) {
+    const session = await mock.startWorkout(workoutId);
+    return cacheSession(await mock.getSessionDetail(session.id)).session;
+  }
+  const detail = await apiRequest(`/workouts/${workoutId}/sessions`, {
+    method: "POST",
+    parse: parseSessionDetail,
+  });
+  return cacheSession(detail).session;
+}
+
+export interface UpdateSetInput {
+  weightKg?: number;
+  reps?: number;
+  rpe?: number | null;
+  completed?: boolean;
+}
+
+export async function updateSet(
+  sessionId: string,
+  setId: string,
+  input: UpdateSetInput,
+): Promise<SessionDetail> {
+  if (isMockApi()) {
+    return cacheSession(await mock.updateSet(sessionId, setId, input));
+  }
+  const detail = await apiRequest(
+    `/workout-sessions/${sessionId}/sets/${setId}`,
+    {
+      method: "PATCH",
+      body: input,
+      parse: parseSessionDetail,
+    },
+  );
+  return cacheSession(detail);
+}
+
+export async function completeSession(
+  sessionId: string,
+): Promise<SessionDetail> {
+  if (isMockApi()) {
+    return cacheSession(await mock.completeSession(sessionId));
+  }
+  const detail = await apiRequest(`/workout-sessions/${sessionId}/complete`, {
+    method: "POST",
+    parse: parseSessionDetail,
+  });
+  return cacheSession(detail);
+}
+
+export async function getActiveSessionId(): Promise<string | null> {
+  const upcoming = await getUpcomingWorkoutDetail();
+  if (!upcoming?.inProgress) {
+    return null;
+  }
+  const session = await getInProgressForWorkout(upcoming.workout.id);
+  return session?.id ?? null;
+}
+
+export async function getWorkoutTabTarget(): Promise<{
+  activeSessionId: string | null;
+  upcomingWorkoutId: string | null;
+}> {
+  const upcoming = await getUpcomingWorkoutDetail();
+  if (!upcoming) {
+    return { activeSessionId: null, upcomingWorkoutId: null };
+  }
+  if (!upcoming.inProgress) {
+    return {
+      activeSessionId: null,
+      upcomingWorkoutId: upcoming.workout.id,
+    };
+  }
+  const session = await getInProgressForWorkout(upcoming.workout.id);
+  return {
+    activeSessionId: session?.id ?? null,
+    upcomingWorkoutId: upcoming.workout.id,
+  };
+}
+
+export function listSessions(): Promise<readonly WorkoutSession[]> {
+  return Promise.resolve(store.sessions.slice());
+}
+
+export async function getSession(sessionId: string): Promise<WorkoutSession> {
+  return (await getSessionDetail(sessionId)).session;
+}
+
+export async function listSessionExercises(
+  sessionId: string,
+): Promise<readonly SessionExercise[]> {
+  const detail = await getSessionDetail(sessionId);
+  return detail.blocks.map((block) => block.item);
+}
+
+export async function listSets(
+  sessionExerciseId: string,
+): Promise<readonly PerformedSet[]> {
+  for (const detail of sessionCache.values()) {
+    const block = detail.blocks.find(
+      (item) => item.item.id === sessionExerciseId,
+    );
+    if (block) {
+      return block.sets;
+    }
+  }
+  throw notFound("Set group", sessionExerciseId);
+}
+
+export function listHistory(): Promise<readonly WorkoutHistoryItem[]> {
+  return Promise.resolve(historyFromStore());
+}

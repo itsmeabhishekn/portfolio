@@ -4,6 +4,7 @@ export const APP_DESCRIPTION =
 
 export const STORAGE_KEYS = {
   themePreference: "squat.theme-preference",
+  sessionToken: "squat.session-token",
 } as const;
 
 export const TOUCH_TARGET_PX = 44;

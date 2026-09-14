@@ -2,7 +2,6 @@ import { api } from "@/services/api";
 import type {
   MuscleGroup,
   Program,
-  User,
   Workout,
   WorkoutHistoryItem,
 } from "@/types/domain";
@@ -25,7 +24,6 @@ export interface ProgressPrView {
 }
 
 export interface DashboardData {
-  user: User;
   today: TodayWorkoutView | null;
   recent: WorkoutHistoryItem | null;
   pr: ProgressPrView | null;
@@ -33,17 +31,12 @@ export interface DashboardData {
 }
 
 export async function loadDashboard(): Promise<DashboardData> {
-  const [user, todayDetail, history, records, series] = await Promise.all([
-    api.auth.getCurrentUser(),
+  const [todayDetail, history, records, series] = await Promise.all([
     api.workouts.getUpcomingWorkoutDetail(),
     api.sessions.listHistory(),
     api.progress.listPersonalRecords(),
     api.progress.listExerciseProgress(),
   ]);
-
-  if (!user) {
-    throw new Error("Not signed in.");
-  }
 
   const today: TodayWorkoutView | null = todayDetail
     ? {
@@ -83,7 +76,6 @@ export async function loadDashboard(): Promise<DashboardData> {
   }
 
   return {
-    user,
     today,
     recent: history[0] ?? null,
     pr,

@@ -1,3 +1,5 @@
+import { getSessionToken, setSessionToken } from "@/services/api/session";
+
 export class ApiError extends Error {
   readonly code: string;
   readonly status: number;
@@ -22,6 +24,8 @@ export const notFound = (entity: string, id: string): ApiError =>
 
 const NETWORK_MESSAGE =
   "Unable to load your workout. Check your connection and try again.";
+
+const UNAUTHORIZED_MESSAGE = "Your session has ended. Sign in again.";
 
 function apiBaseUrl(): string {
   const value = import.meta.env.VITE_API_BASE_URL;
@@ -122,6 +126,8 @@ export async function apiRequest<T>(
   const method = options.method ?? "GET";
   let response: Response;
 
+  const token = getSessionToken();
+
   try {
     response = await fetch(url, {
       method,
@@ -130,6 +136,7 @@ export async function apiRequest<T>(
         ...(options.body !== undefined
           ? { "Content-Type": "application/json" }
           : {}),
+        ...(token === null ? {} : { Authorization: `Bearer ${token}` }),
       },
       body:
         options.body === undefined ? undefined : JSON.stringify(options.body),
@@ -154,18 +161,27 @@ export async function apiRequest<T>(
     const code = errorNameFromBody(payload, "http_error")
       .toLowerCase()
       .replace(/\s+/g, "_");
+
+    // Dropping the token here is what moves the app back to the login screen,
+    // wherever the rejected request came from.
+    if (response.status === 401 && token !== null) {
+      setSessionToken(null);
+    }
+
     const message =
-      status === 404
-        ? "We couldn't find that workout."
-        : status === 400 || status === 409
-          ? debug
-          : status === 0
-            ? NETWORK_MESSAGE
-            : method === "PATCH"
-              ? "We couldn't save that set. Try again."
-              : method === "GET"
-                ? "We couldn't load your workout. Try again."
-                : "We couldn't complete that request. Try again.";
+      status === 401
+        ? UNAUTHORIZED_MESSAGE
+        : status === 404
+          ? "We couldn't find that workout."
+          : status === 400 || status === 409
+            ? debug
+            : status === 0
+              ? NETWORK_MESSAGE
+              : method === "PATCH"
+                ? "We couldn't save that set. Try again."
+                : method === "GET"
+                  ? "We couldn't load your workout. Try again."
+                  : "We couldn't complete that request. Try again.";
     const error = new ApiError(message, code, status, debug);
     logFailure(path, error);
     throw error;

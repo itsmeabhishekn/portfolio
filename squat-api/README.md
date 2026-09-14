@@ -33,7 +33,8 @@ Copy `.env.example` to `.env`. Required variables:
 | `PORT` | HTTP port (default `3001`) |
 | `CORS_ORIGINS` | Comma-separated allowed origins |
 | `NODE_ENV` | `development` / `test` / `production` |
-| `DEV_USER_EMAIL` | Seeded development user |
+| `GOOGLE_CLIENT_ID` | OAuth client ID, checked as the Google ID token audience |
+| `SESSION_JWT_SECRET` | Signs Squat's own session tokens (32+ characters) |
 | `POSTGRES_USER` | Docker Postgres user (local default `squat`) |
 | `POSTGRES_PASSWORD` | Docker Postgres password |
 | `POSTGRES_DB` | Docker Postgres database name |
@@ -49,16 +50,15 @@ docker compose up -d
 
 Postgres is published on `localhost:5433` to avoid clashing with a local server on `5432`. A `squat_test` database is also created for tests.
 
-## Migrations and seed
+## Migrations
 
 ```bash
 npx prisma migrate dev
-npm run prisma:seed
 ```
 
-The first migration creates the relational schema. The second adds a partial unique index (Prisma cannot express `UNIQUE (...) WHERE status = 'IN_PROGRESS'`) plus check constraints for rep ranges, set numbers, and RPE.
+The first migration creates the relational schema. The second adds a partial unique index (Prisma cannot express `UNIQUE (...) WHERE status = 'IN_PROGRESS'`) plus check constraints for rep ranges, set numbers, and RPE. The fourth replaces `password_hash` with a unique `google_sub`.
 
-Seed is deterministic and safe to rerun. It recreates Alex Rivera, PPL Strength Block (Push A / Pull A / Legs A), and three completed sessions matching the frontend mock.
+There is no seed. Users are created by Google sign-in, which also provisions their starter program, so a fresh database becomes usable by signing in. Test fixtures live in `test/fixtures/` and are excluded from the production build.
 
 ## Run
 
@@ -78,6 +78,8 @@ Product routes are prefixed with `/api/v1`. Health and Swagger are not.
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Process + database check |
+| `POST` | `/api/v1/auth/google` | Exchange a Google ID token for a session token |
+| `GET` | `/api/v1/auth/me` | The authenticated user |
 | `GET` | `/api/v1/workouts/upcoming` | Next planned workout for the current user |
 | `GET` | `/api/v1/workouts/:workoutId` | Workout template (prescription only) |
 | `GET` | `/api/v1/workouts/:workoutId/sessions/in-progress` | Active session, or 404 |
@@ -121,9 +123,16 @@ To inspect state without applying anything:
 docker compose -f docker-compose.prod.yml run --rm migrate npx --no-install prisma migrate status
 ```
 
-The API port is published on `127.0.0.1` only, because `DevAuthGuard` authenticates
-nobody (see below). Serve it publicly through a reverse proxy that terminates HTTPS,
-and set `CORS_ORIGINS` to the deployed frontend origin.
+The API port is published on `127.0.0.1` only. Serve it publicly through a reverse
+proxy that terminates HTTPS, and set `CORS_ORIGINS` to the deployed frontend origin
+(for this project: `https://abhishekn.dev`). A trailing path such as `/squat/` is not
+part of the origin. Restart the container after changing `.env`.
+HTTPS is not optional in production: a browser on an `https://` page will refuse to
+call an `http://` API, and the session token would otherwise cross the network in
+clear text.
+
+`.env` on the host needs `GOOGLE_CLIENT_ID` and `SESSION_JWT_SECRET` alongside
+`DATABASE_URL`. Neither belongs in the image or in Git.
 
 ## Database design
 
@@ -145,21 +154,33 @@ UNIQUE (user_id, workout_id) WHERE status = 'IN_PROGRESS'
 
 Prisma cannot express that constraint, so it is added in SQL. Session creation still checks for an existing row first, and a unique-violation race resumes the winner instead of failing.
 
-## Development authentication
+## Authentication
 
-There are no login endpoints. `DevCurrentUserService` loads `DEV_USER_EMAIL` from the database and `DevAuthGuard` attaches that user to every product request.
+Google Sign-In only. There are no passwords, no development user, and no seeded account.
 
-Do not send user IDs in request bodies. Swap `CurrentUserService` for a JWT implementation later without rewriting workout/session services.
+```text
+frontend → Google → ID token → POST /api/v1/auth/google
+                                   ↓ verified server-side
+                            find or create User by google_sub
+                                   ↓
+                        Squat session token (JWT, 30 days)
+                                   ↓
+                   Authorization: Bearer <token> on every request
+```
 
-Seeded user:
+Google ID tokens are verified with `google-auth-library`, which checks the signature against Google's published keys plus the audience, issuer, and expiry. `GOOGLE_CLIENT_ID` is the expected audience and must match the value the frontend builds with. The Google client **secret** is not used and must not be configured: Squat verifies ID tokens rather than performing an OAuth code exchange.
 
-- email: `alex@squat.app`
-- password hash exists but is unused until the auth phase
-- password (dev only): `dev-password-not-for-production`
+Identity is keyed on the Google `sub`, never on email. Email and display name are refreshed from the verified profile on each sign-in. If the incoming email already belongs to a different `google_sub`, the stored profile is left alone, because linking accounts by email would be an account-takeover path.
 
-## Future authentication
+`JwtAuthGuard` runs globally and reads the user from the database on every request, so deleting an account revokes it immediately rather than at token expiry. `@Public()` opts a route out; only `POST /auth/google` and health use it. Protected routes return 401 when the header is missing, malformed, expired, or points at a user that no longer exists.
 
-Replace `DevCurrentUserService` / `DevAuthGuard` with JWT (or session) auth that still populates `request.user`. Keep `getWorkout(workoutId, currentUserId)` signatures.
+Ownership is unchanged: services take `currentUserId` from `request.user` and scope every query by it. Never send a user ID in a request body — `forbidNonWhitelisted` rejects it.
+
+Rotating `SESSION_JWT_SECRET` invalidates every existing session.
+
+## First sign-in
+
+A new Google identity gets a `Push Pull Legs` starter program (Push A / Pull A / Legs A) in the same transaction as the user row, so the app is never empty for a real user. Exercises are global reference data and are upserted by name. The starter program deliberately ships without target weights.
 
 ## Intentionally not in this phase
 

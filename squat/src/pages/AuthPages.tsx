@@ -1,62 +1,67 @@
-import { Link } from "react-router-dom";
-import { Button, Input, PageHeader } from "@/components/ui";
+import { useCallback, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { Spinner } from "@/components/feedback/Spinner";
+import { PageHeader } from "@/components/ui";
 import { APP_NAME } from "@/config/app";
 import { paths } from "@/config/paths";
+import { GoogleSignInButton } from "@/features/auth/GoogleSignInButton";
+import { useAuth } from "@/hooks/useAuth";
+import { ApiError } from "@/services/api/client";
 import styles from "./pages.module.css";
 
 export function LoginPage() {
+  const { status, signIn } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const onCredential = useCallback(
+    (credential: string) => {
+      setError(null);
+      setBusy(true);
+      signIn(credential)
+        .catch((caught: unknown) => {
+          setError(
+            caught instanceof ApiError
+              ? caught.message
+              : "We couldn't sign you in. Try again.",
+          );
+        })
+        .finally(() => {
+          setBusy(false);
+        });
+    },
+    [signIn],
+  );
+
+  const onError = useCallback((message: string) => {
+    setError(message);
+  }, []);
+
+  if (status === "loading") {
+    return <Spinner label="Checking your session" />;
+  }
+
+  if (status === "authenticated") {
+    return <Navigate to={paths.dashboard} replace />;
+  }
+
   return (
     <div className={styles.stack}>
       <PageHeader
         eyebrow={APP_NAME}
         title="Sign in"
-        description="Auth is a shell for now. The API layer is ready for a later NestJS swap."
+        description="Squat uses your Google account. Your first sign-in creates a starter program."
       />
-      <form
-        className={styles.form}
-        onSubmit={(event) => {
-          event.preventDefault();
-        }}
-      >
-        <Input label="Email" type="email" autoComplete="email" />
-        <Input label="Password" type="password" autoComplete="current-password" />
-        <Button type="submit" fullWidth>
-          Continue
-        </Button>
-      </form>
-      <p className="t-secondary">
-        Need an account?{" "}
-        <Link className={styles.linkish} to={paths.register}>
-          Register
-        </Link>
-      </p>
-      <Link className={styles.linkish} to={paths.dashboard}>
-        Skip to app
-      </Link>
-    </div>
-  );
-}
 
-export function RegisterPage() {
-  return (
-    <div className={styles.stack}>
-      <PageHeader eyebrow={APP_NAME} title="Create account" />
-      <form
-        className={styles.form}
-        onSubmit={(event) => {
-          event.preventDefault();
-        }}
-      >
-        <Input label="Name" autoComplete="name" />
-        <Input label="Email" type="email" autoComplete="email" />
-        <Input label="Password" type="password" autoComplete="new-password" />
-        <Button type="submit" fullWidth>
-          Create account
-        </Button>
-      </form>
-      <Link className={styles.linkish} to={paths.login}>
-        Back to sign in
-      </Link>
+      <GoogleSignInButton onCredential={onCredential} onError={onError} />
+
+      {busy ? <Spinner label="Signing you in" /> : null}
+
+      {error ? (
+        <p className={styles.error} role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

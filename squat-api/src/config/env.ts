@@ -1,10 +1,10 @@
 import { plainToInstance } from 'class-transformer';
 import {
-  IsEmail,
   IsIn,
   IsInt,
   IsString,
   Min,
+  MinLength,
   validateSync,
 } from 'class-validator';
 
@@ -22,8 +22,13 @@ export class EnvironmentVariables {
   @IsString()
   CORS_ORIGINS: string;
 
-  @IsEmail()
-  DEV_USER_EMAIL: string;
+  @IsString()
+  @MinLength(1)
+  GOOGLE_CLIENT_ID: string;
+
+  @IsString()
+  @MinLength(32)
+  SESSION_JWT_SECRET: string;
 }
 
 export function validateEnv(
@@ -36,7 +41,8 @@ export function validateEnv(
       PORT: config.PORT,
       DATABASE_URL: config.DATABASE_URL,
       CORS_ORIGINS: config.CORS_ORIGINS,
-      DEV_USER_EMAIL: config.DEV_USER_EMAIL,
+      GOOGLE_CLIENT_ID: config.GOOGLE_CLIENT_ID,
+      SESSION_JWT_SECRET: config.SESSION_JWT_SECRET,
     },
     { enableImplicitConversion: true },
   );
@@ -53,6 +59,6 @@ export function validateEnv(
 export function parseCorsOrigins(value: string): string[] {
   return value
     .split(',')
-    .map((origin) => origin.trim())
+    .map((origin) => origin.trim().replace(/\/$/, ''))
     .filter((origin) => origin.length > 0);
 }

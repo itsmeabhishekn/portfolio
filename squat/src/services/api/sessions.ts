@@ -1,10 +1,8 @@
 import { apiRequest, notFound } from "@/services/api/client";
 import { parseSessionDetail, type SessionDetail } from "@/services/api/map";
-import * as mock from "@/services/api/mock/runtime";
 import { getUpcomingWorkoutDetail } from "@/services/api/workouts";
 import { exercises } from "@/services/api/mock/data";
 import { store } from "@/services/api/mock/store";
-import { isMockApi } from "@/services/api/mode";
 import type {
   PerformedSet,
   SessionExercise,
@@ -57,24 +55,15 @@ function cacheSession(detail: SessionDetail): SessionDetail {
 export async function getSessionDetail(
   sessionId: string,
 ): Promise<SessionDetail> {
-  const detail = isMockApi()
-    ? await mock.getSessionDetail(sessionId)
-    : await apiRequest(`/workout-sessions/${sessionId}`, {
-        parse: parseSessionDetail,
-      });
+  const detail = await apiRequest(`/workout-sessions/${sessionId}`, {
+    parse: parseSessionDetail,
+  });
   return cacheSession(detail);
 }
 
 export async function getInProgressForWorkout(
   workoutId: string,
 ): Promise<WorkoutSession | null> {
-  if (isMockApi()) {
-    const session = await mock.getInProgressForWorkout(workoutId);
-    if (!session) {
-      return null;
-    }
-    return cacheSession(await mock.getSessionDetail(session.id)).session;
-  }
   const detail = await apiRequest(
     `/workouts/${workoutId}/sessions/in-progress`,
     {
@@ -89,10 +78,6 @@ export async function getInProgressForWorkout(
 }
 
 export async function startWorkout(workoutId: string): Promise<WorkoutSession> {
-  if (isMockApi()) {
-    const session = await mock.startWorkout(workoutId);
-    return cacheSession(await mock.getSessionDetail(session.id)).session;
-  }
   const detail = await apiRequest(`/workouts/${workoutId}/sessions`, {
     method: "POST",
     parse: parseSessionDetail,
@@ -112,9 +97,6 @@ export async function updateSet(
   setId: string,
   input: UpdateSetInput,
 ): Promise<SessionDetail> {
-  if (isMockApi()) {
-    return cacheSession(await mock.updateSet(sessionId, setId, input));
-  }
   const detail = await apiRequest(
     `/workout-sessions/${sessionId}/sets/${setId}`,
     {
@@ -129,9 +111,6 @@ export async function updateSet(
 export async function completeSession(
   sessionId: string,
 ): Promise<SessionDetail> {
-  if (isMockApi()) {
-    return cacheSession(await mock.completeSession(sessionId));
-  }
   const detail = await apiRequest(`/workout-sessions/${sessionId}/complete`, {
     method: "POST",
     parse: parseSessionDetail,

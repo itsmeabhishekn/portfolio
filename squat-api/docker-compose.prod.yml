@@ -8,8 +8,8 @@ services:
     container_name: squat-api
     env_file:
       - .env
-    # Loopback only. DevAuthGuard trusts every request, so publishing this port
-    # on 0.0.0.0 would expose an unauthenticated write API. Terminate HTTPS in a
+    # Loopback only. Session tokens travel in an Authorization header, so the API
+    # must not be reachable over plain HTTP from the internet. Terminate HTTPS in a
     # reverse proxy on the host and forward to 127.0.0.1:3001.
     ports:
       - "127.0.0.1:3001:3001"

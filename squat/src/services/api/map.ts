@@ -9,6 +9,7 @@ import type {
   Rpe,
   SessionExercise,
   SessionStatus,
+  User,
   Workout,
   WorkoutExercise,
   WorkoutSession,
@@ -66,6 +67,11 @@ export interface SessionBlock {
 export interface SessionDetail {
   session: WorkoutSession;
   blocks: readonly SessionBlock[];
+}
+
+export interface AuthSession {
+  token: string;
+  user: User;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -331,5 +337,26 @@ export function parseSessionDetail(value: unknown): SessionDetail {
     blocks: value.exercises.map((item) =>
       parseSessionBlock(item, sessionId, workoutId),
     ),
+  };
+}
+
+export function parseUser(value: unknown): User {
+  if (!isRecord(value)) {
+    throw unexpected("user");
+  }
+  return {
+    id: asString(value.id, "user.id"),
+    displayName: asString(value.displayName, "user.displayName"),
+    email: asString(value.email, "user.email"),
+  };
+}
+
+export function parseAuthSession(value: unknown): AuthSession {
+  if (!isRecord(value)) {
+    throw unexpected("auth");
+  }
+  return {
+    token: asString(value.token, "auth.token"),
+    user: parseUser(value.user),
   };
 }

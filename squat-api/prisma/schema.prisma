@@ -35,12 +35,12 @@ enum WorkoutSessionStatus {
 }
 
 model User {
-  id           String   @id @default(uuid()) @db.Uuid
-  email        String   @unique
-  displayName  String   @map("display_name")
-  passwordHash String   @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id          String   @id @default(uuid()) @db.Uuid
+  googleSub   String   @unique @map("google_sub")
+  email       String   @unique
+  displayName String   @map("display_name")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   programs        Program[]
   workoutSessions WorkoutSession[]

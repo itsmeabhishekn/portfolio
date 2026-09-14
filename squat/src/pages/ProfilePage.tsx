@@ -1,37 +1,22 @@
-import { Link } from "react-router-dom";
-import { Spinner } from "@/components/feedback/Spinner";
 import { Button, Card, PageHeader, SegmentedControl } from "@/components/ui";
-import { paths } from "@/config/paths";
+import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { useToast } from "@/hooks/useToast";
-import { useAsyncValue } from "@/hooks/useAsyncValue";
-import { api } from "@/services/api";
 import type { ThemePreference } from "@/config/theme";
 import styles from "./pages.module.css";
 
 export function ProfilePage() {
-  const { data, error, loading } = useAsyncValue(() => api.auth.getCurrentUser());
+  const { user, signOut } = useAuth();
   const { preference, setPreference } = useTheme();
   const { pushToast } = useToast();
 
-  if (loading) {
-    return <Spinner label="Loading profile" />;
-  }
-
-  if (error || !data) {
-    return <p className={styles.error}>{error?.message ?? "Not signed in."}</p>;
+  if (!user) {
+    return <p className={styles.error}>Not signed in.</p>;
   }
 
   return (
     <div className={styles.stack}>
-      <PageHeader eyebrow="Profile" title={data.displayName} description={data.email} />
-
-      <Card>
-        <p className="t-meta">Units</p>
-        <p className="t-exercise" style={{ marginTop: "0.4rem" }}>
-          {data.unit.toUpperCase()}
-        </p>
-      </Card>
+      <PageHeader eyebrow="Profile" title={user.displayName} description={user.email} />
 
       <section className={styles.section}>
         <h2 className="t-section">Appearance</h2>
@@ -50,7 +35,7 @@ export function ProfilePage() {
       <Card>
         <p className="t-meta">Settings</p>
         <p className="t-secondary" style={{ marginTop: "0.5rem" }}>
-          Account, rest timers, and equipment preferences will land here.
+          Units, rest timers, and equipment preferences will land here.
         </p>
         <div style={{ marginTop: "1rem" }}>
           <Button
@@ -62,11 +47,17 @@ export function ProfilePage() {
         </div>
       </Card>
 
-      <p className="t-secondary">
-        <Link className={styles.linkish} to={paths.login}>
-          Auth screens
-        </Link>
-      </p>
+      <Card>
+        <p className="t-meta">Account</p>
+        <p className="t-secondary" style={{ marginTop: "0.5rem" }}>
+          Signed in with Google as {user.email}.
+        </p>
+        <div style={{ marginTop: "1rem" }}>
+          <Button variant="secondary" onClick={signOut}>
+            Sign out
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 }

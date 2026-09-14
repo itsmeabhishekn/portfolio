@@ -97,6 +97,34 @@ npm run test:e2e
 
 E2E tests expect Postgres to be running.
 
+## Production deploy
+
+`Dockerfile` builds two targets. `runner` carries production dependencies plus the
+generated Prisma client. `migrator` keeps devDependencies so `prisma migrate deploy`
+runs the CLI version pinned in `package-lock.json` instead of one that `npx` fetches
+from the registry at run time.
+
+Create `.env` on the host with the production `DATABASE_URL`, then:
+
+```bash
+docker compose -f docker-compose.prod.yml run --rm migrate
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+Migrations are a separate step on purpose. Running them from the app container's
+entrypoint would let several replicas migrate concurrently.
+
+Never use `prisma migrate dev` or `prisma db push` against the production database.
+To inspect state without applying anything:
+
+```bash
+docker compose -f docker-compose.prod.yml run --rm migrate npx --no-install prisma migrate status
+```
+
+The API port is published on `127.0.0.1` only, because `DevAuthGuard` authenticates
+nobody (see below). Serve it publicly through a reverse proxy that terminates HTTPS,
+and set `CORS_ORIGINS` to the deployed frontend origin.
+
 ## Database design
 
 Templates (planned):
@@ -135,4 +163,4 @@ Replace `DevCurrentUserService` / `DevAuthGuard` with JWT (or session) auth that
 
 ## Intentionally not in this phase
 
-JWT, OAuth, set logging, RPE submission, workout completion, history/progress APIs, frontend wiring, Redis, queues, production Docker, and load tests.
+JWT, OAuth, history/progress APIs, Redis, queues, HTTPS termination, and load tests.

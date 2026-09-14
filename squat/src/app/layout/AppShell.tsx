@@ -1,11 +1,15 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { BottomNav } from "@/components/navigation/BottomNav";
+import { useAsyncValue } from "@/hooks/useAsyncValue";
 import { api } from "@/services/api";
 import styles from "./AppShell.module.css";
 
 export function AppShell() {
-  const activeSessionId = api.sessions.getActiveSessionId();
-  const upcomingWorkoutId = api.workouts.getUpcomingWorkoutId();
+  const location = useLocation();
+  const { data } = useAsyncValue(
+    () => api.sessions.getWorkoutTabTarget(),
+    `workout-nav:${location.pathname}`,
+  );
 
   return (
     <div className={styles.shell}>
@@ -13,8 +17,8 @@ export function AppShell() {
         <Outlet />
       </main>
       <BottomNav
-        activeSessionId={activeSessionId}
-        upcomingWorkoutId={upcomingWorkoutId}
+        activeSessionId={data?.activeSessionId ?? null}
+        upcomingWorkoutId={data?.upcomingWorkoutId ?? null}
       />
     </div>
   );

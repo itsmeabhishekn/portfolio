@@ -34,6 +34,7 @@ export interface NumberInputProps {
   step?: number;
   suffix?: string;
   disabled?: boolean;
+  integer?: boolean;
 }
 
 export function NumberInput({
@@ -45,12 +46,13 @@ export function NumberInput({
   step = 1,
   suffix,
   disabled = false,
+  integer = false,
 }: NumberInputProps) {
   const inputId = `${label.replace(/\s+/g, "-").toLowerCase()}-number`;
 
   const nudge = (direction: 1 | -1) => {
     const current = value ?? 0;
-    const next = Number((current + direction * step).toFixed(2));
+    const next = Number((current + direction * step).toFixed(integer ? 0 : 2));
     onChange(Math.min(max, Math.max(min, next)));
   };
 
@@ -73,7 +75,9 @@ export function NumberInput({
         <input
           id={inputId}
           className={styles.input}
-          inputMode="decimal"
+          inputMode={integer ? "numeric" : "decimal"}
+          enterKeyHint="done"
+          autoComplete="off"
           type="text"
           disabled={disabled}
           value={value ?? ""}
@@ -84,9 +88,13 @@ export function NumberInput({
               return;
             }
             const parsed = Number(raw);
-            if (Number.isFinite(parsed)) {
-              onChange(parsed);
+            if (!Number.isFinite(parsed)) {
+              return;
             }
+            if (integer && !Number.isInteger(parsed)) {
+              return;
+            }
+            onChange(parsed);
           }}
         />
         <button

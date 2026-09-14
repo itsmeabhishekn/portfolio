@@ -6,6 +6,7 @@ import { loadDashboard } from "@/features/dashboard/loadDashboard";
 import { ProgressSnapshot } from "@/features/dashboard/ProgressSnapshot";
 import { RecentWorkout } from "@/features/dashboard/RecentWorkout";
 import { TodayWorkout } from "@/features/dashboard/TodayWorkout";
+import { loadFailureCopy } from "@/services/api/client";
 import styles from "./dashboard.module.css";
 
 function DashboardSkeleton() {
@@ -28,9 +29,11 @@ export function DashboardPage() {
   }
 
   if (error || !data) {
+    const copy = loadFailureCopy(error);
     return (
       <LoadError
-        body="We couldn't load your training day."
+        title={copy.title}
+        body={copy.body}
         onRetry={reload}
       />
     );

@@ -31,5 +31,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "squat"]
+  "exclude": ["node_modules", "squat", "squat-api"]
 }

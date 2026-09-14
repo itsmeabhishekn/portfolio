@@ -1,17 +1,12 @@
 import { api } from "@/services/api";
-import {
-  completedWorkoutStreak,
-  estimateWorkoutMinutes,
-  muscleGroupsFromExercises,
-} from "@/lib/workoutMeta";
 import type {
-  Exercise,
   MuscleGroup,
   Program,
   User,
   Workout,
   WorkoutHistoryItem,
 } from "@/types/domain";
+import { completedWorkoutStreak } from "@/lib/workoutMeta";
 
 export interface TodayWorkoutView {
   workout: Workout;
@@ -38,9 +33,9 @@ export interface DashboardData {
 }
 
 export async function loadDashboard(): Promise<DashboardData> {
-  const [user, workout, history, records, series] = await Promise.all([
+  const [user, todayDetail, history, records, series] = await Promise.all([
     api.auth.getCurrentUser(),
-    api.workouts.getUpcomingWorkout(),
+    api.workouts.getUpcomingWorkoutDetail(),
     api.sessions.listHistory(),
     api.progress.listPersonalRecords(),
     api.progress.listExerciseProgress(),
@@ -50,28 +45,16 @@ export async function loadDashboard(): Promise<DashboardData> {
     throw new Error("Not signed in.");
   }
 
-  let today: TodayWorkoutView | null = null;
-
-  if (workout) {
-    const [program, items, inProgress] = await Promise.all([
-      api.programs.getProgram(workout.programId),
-      api.workouts.listWorkoutExercises(workout.id),
-      api.sessions.getInProgressForWorkout(workout.id),
-    ]);
-    const catalog: Exercise[] = [];
-    for (const item of items) {
-      catalog.push(await api.exercises.getExercise(item.exerciseId));
-    }
-
-    today = {
-      workout,
-      program,
-      muscleGroups: muscleGroupsFromExercises(catalog),
-      exerciseCount: items.length,
-      estimatedMinutes: estimateWorkoutMinutes(items),
-      inProgress: inProgress !== null,
-    };
-  }
+  const today: TodayWorkoutView | null = todayDetail
+    ? {
+        workout: todayDetail.workout,
+        program: todayDetail.program,
+        muscleGroups: todayDetail.muscleGroups,
+        exerciseCount: todayDetail.exerciseCount,
+        estimatedMinutes: todayDetail.estimatedMinutes,
+        inProgress: todayDetail.inProgress,
+      }
+    : null;
 
   const latestRecord = records
     .slice()

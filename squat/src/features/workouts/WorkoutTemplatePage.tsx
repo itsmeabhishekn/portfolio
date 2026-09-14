@@ -7,6 +7,7 @@ import { paths } from "@/config/paths";
 import { useAsyncValue } from "@/hooks/useAsyncValue";
 import { useToast } from "@/hooks/useToast";
 import { api } from "@/services/api";
+import { ApiError, loadFailureCopy } from "@/services/api/client";
 import {
   estimateWorkoutMinutes,
   muscleGroupsFromExercises,
@@ -25,25 +26,25 @@ interface TemplateData {
 }
 
 async function loadTemplate(workoutId: string): Promise<TemplateData> {
-  const workout = await api.workouts.getWorkout(workoutId);
-  const [program, items, inProgress] = await Promise.all([
-    api.programs.getProgram(workout.programId),
-    api.workouts.listWorkoutExercises(workout.id),
-    api.sessions.getInProgressForWorkout(workout.id),
-  ]);
-
-  const rows = await Promise.all(
-    items.map(async (item) => ({
-      item,
-      exercise: await api.exercises.getExercise(item.exerciseId),
-    })),
-  );
-
+  const detail = await api.workouts.getWorkoutDetail(workoutId);
   return {
-    workout,
-    programName: program.name,
-    rows,
-    inProgress: inProgress !== null,
+    workout: detail.workout,
+    programName: detail.program.name,
+    rows: detail.items.map((item) => {
+      const exercise = detail.exercises.find(
+        (entry) => entry.id === item.exerciseId,
+      );
+      if (!exercise) {
+        throw new ApiError(
+          "The server returned an unexpected response.",
+          "invalid_response",
+          500,
+          `Missing exercise ${item.exerciseId}`,
+        );
+      }
+      return { item, exercise };
+    }),
+    inProgress: detail.inProgress,
   };
 }
 
@@ -86,9 +87,11 @@ export function WorkoutTemplatePage() {
   }
 
   if (error || !data) {
+    const copy = loadFailureCopy(error);
     return (
       <LoadError
-        body="We couldn't load this workout."
+        title={copy.title}
+        body={copy.body}
         onRetry={reload}
       />
     );

@@ -17,7 +17,10 @@ export function configureApp(app: INestApplication): void {
   corsLogger.log(`Allowed origins: ${corsOrigins.join(', ')}`);
 
   app.enableCors({
-    origin: (origin, callback) => {
+    origin: (
+      origin: string | undefined,
+      callback: (error: Error | null, allow?: boolean) => void,
+    ) => {
       if (origin === undefined || allowed.has(origin)) {
         callback(null, true);
         return;

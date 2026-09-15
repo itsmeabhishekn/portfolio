@@ -10,7 +10,6 @@ import {
 } from './google-identity.service.js';
 import { JwtAuthGuard } from './jwt-auth.guard.js';
 import { SessionTokenService } from './session-token.service.js';
-import { StarterProgramService } from './starter-program.service.js';
 
 @Global()
 @Module({
@@ -27,7 +26,6 @@ import { StarterProgramService } from './starter-program.service.js';
   providers: [
     AuthService,
     SessionTokenService,
-    StarterProgramService,
     {
       provide: GoogleIdentityVerifier,
       useClass: GoogleIdentityService,

@@ -1,14 +1,30 @@
-import { RequestMethod, ValidationPipe, type INestApplication } from '@nestjs/common';
+import {
+  Logger,
+  RequestMethod,
+  ValidationPipe,
+  type INestApplication,
+} from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { parseCorsOrigins } from './config/env.js';
+
+const corsLogger = new Logger('CORS');
 
 export function configureApp(app: INestApplication): void {
   const corsOrigins = parseCorsOrigins(
     process.env.CORS_ORIGINS ?? 'http://localhost:5173',
   );
+  const allowed = new Set(corsOrigins);
+  corsLogger.log(`Allowed origins: ${corsOrigins.join(', ')}`);
 
   app.enableCors({
-    origin: corsOrigins,
+    origin: (origin, callback) => {
+      if (origin === undefined || allowed.has(origin)) {
+        callback(null, true);
+        return;
+      }
+      corsLogger.warn(`Blocked origin: ${origin}`);
+      callback(null, false);
+    },
     methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Accept', 'Content-Type', 'Authorization'],
     maxAge: 86400,

@@ -9,7 +9,6 @@ import {
   type GoogleIdentity,
 } from './google-identity.service.js';
 import { SessionTokenService } from './session-token.service.js';
-import { StarterProgramService } from './starter-program.service.js';
 
 const identity: GoogleIdentity = {
   sub: 'google-sub-1',
@@ -31,11 +30,9 @@ describe('AuthService', () => {
       create: jest.fn(),
       update: jest.fn(),
     },
-    $transaction: jest.fn(),
   };
   const google = { verify: jest.fn() };
   const tokens = { issue: jest.fn(), readUserId: jest.fn() };
-  const starterProgram = { provision: jest.fn() };
 
   let service: AuthService;
 
@@ -43,9 +40,6 @@ describe('AuthService', () => {
     jest.resetAllMocks();
     google.verify.mockResolvedValue(identity as never);
     tokens.issue.mockResolvedValue('session-token' as never);
-    prisma.$transaction.mockImplementation((run: unknown) =>
-      (run as (tx: unknown) => Promise<unknown>)(prisma),
-    );
 
     const module = await Test.createTestingModule({
       providers: [
@@ -53,13 +47,12 @@ describe('AuthService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: GoogleIdentityVerifier, useValue: google },
         { provide: SessionTokenService, useValue: tokens },
-        { provide: StarterProgramService, useValue: starterProgram },
       ],
     }).compile();
     service = module.get(AuthService);
   });
 
-  it('creates a user with a starter program on first sign-in', async () => {
+  it('creates a user on first sign-in and does not invent a program', async () => {
     prisma.user.findUnique.mockResolvedValue(null as never);
     prisma.user.create.mockResolvedValue({
       id: 'user-1',
@@ -80,7 +73,6 @@ describe('AuthService', () => {
         },
       }),
     );
-    expect(starterProgram.provision).toHaveBeenCalledWith(prisma, 'user-1');
   });
 
   it('matches an existing user by Google sub without creating a duplicate', async () => {
@@ -97,7 +89,6 @@ describe('AuthService', () => {
       expect.objectContaining({ where: { googleSub: identity.sub } }),
     );
     expect(prisma.user.create).not.toHaveBeenCalled();
-    expect(starterProgram.provision).not.toHaveBeenCalled();
   });
 
   it('refreshes a changed email from the verified Google profile', async () => {

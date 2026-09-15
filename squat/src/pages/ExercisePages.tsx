@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { Spinner } from "@/components/feedback/Spinner";
-import { Card, PageHeader } from "@/components/ui";
+import { Card, EmptyState, PageHeader } from "@/components/ui";
 import { paths } from "@/config/paths";
 import { useAsyncValue } from "@/hooks/useAsyncValue";
 import { api } from "@/services/api";
@@ -13,8 +13,17 @@ export function ExercisesPage() {
     return <Spinner label="Loading exercises" />;
   }
 
-  if (error || !data) {
-    return <p className={styles.error}>{error?.message ?? "Could not load exercises."}</p>;
+  if (error) {
+    return <p className={styles.error}>{error.message}</p>;
+  }
+
+  if (!data?.length) {
+    return (
+      <EmptyState
+        title="No exercises"
+        body="The exercise library is empty until programs exist."
+      />
+    );
   }
 
   return (

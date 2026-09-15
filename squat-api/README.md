@@ -58,7 +58,7 @@ npx prisma migrate dev
 
 The first migration creates the relational schema. The second adds a partial unique index (Prisma cannot express `UNIQUE (...) WHERE status = 'IN_PROGRESS'`) plus check constraints for rep ranges, set numbers, and RPE. The fourth replaces `password_hash` with a unique `google_sub`.
 
-There is no seed. Users are created by Google sign-in, which also provisions their starter program, so a fresh database becomes usable by signing in. Test fixtures live in `test/fixtures/` and are excluded from the production build.
+There is no seed and no starter program. Users are created by Google sign-in with no workouts attached. `GET /workouts/upcoming` returns 404 until that user has a program. Test fixtures live in `test/fixtures/` and are excluded from the production build.
 
 ## Run
 
@@ -180,7 +180,7 @@ Rotating `SESSION_JWT_SECRET` invalidates every existing session.
 
 ## First sign-in
 
-A new Google identity gets a `Push Pull Legs` starter program (Push A / Pull A / Legs A) in the same transaction as the user row, so the app is never empty for a real user. Exercises are global reference data and are upserted by name. The starter program deliberately ships without target weights.
+A new Google identity creates a `User` row only. Programs, workouts, and sessions are not created automatically.
 
 ## Intentionally not in this phase
 

@@ -6,8 +6,8 @@ import {
 } from '@prisma/client';
 import { seedIds } from './ids.js';
 
-// Test fixtures only. Real users and their starter programs are created by
-// Google sign-in, so there is no production seed and this never runs against RDS.
+// Test fixtures only. Never run against RDS. Production users come from Google
+// sign-in and start with no programs.
 
 const ids = {
   user: seedIds.user,

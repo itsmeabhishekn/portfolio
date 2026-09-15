@@ -7,7 +7,6 @@ import {
   type GoogleIdentity,
 } from './google-identity.service.js';
 import { SessionTokenService } from './session-token.service.js';
-import { StarterProgramService } from './starter-program.service.js';
 
 const userFields = {
   id: true,
@@ -26,7 +25,6 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly google: GoogleIdentityVerifier,
     private readonly tokens: SessionTokenService,
-    private readonly starterProgram: StarterProgramService,
   ) {}
 
   async signInWithGoogle(credential: string): Promise<SignInResult> {
@@ -84,17 +82,13 @@ export class AuthService {
   private async createUser(
     identity: GoogleIdentity,
   ): Promise<AuthenticatedUser> {
-    return this.prisma.$transaction(async (tx) => {
-      const user = await tx.user.create({
-        data: {
-          googleSub: identity.sub,
-          email: identity.email,
-          displayName: identity.displayName,
-        },
-        select: userFields,
-      });
-      await this.starterProgram.provision(tx, user.id);
-      return user;
+    return this.prisma.user.create({
+      data: {
+        googleSub: identity.sub,
+        email: identity.email,
+        displayName: identity.displayName,
+      },
+      select: userFields,
     });
   }
 

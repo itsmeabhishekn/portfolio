@@ -4,7 +4,7 @@ Isolated fitness tracking frontend. It does not share code, styles, or routing w
 
 ## Local development
 
-Sign-in, the dashboard, workout templates, and the active session talk to the NestJS API. History, progress, programs, and the exercise catalog still read local mock data because no endpoints exist for them yet.
+Sign-in, the upcoming workout, templates, and the active session talk to the NestJS API. History, progress, programs, and the exercise catalog have no API yet and render empty states.
 
 Copy `.env.example` to `.env`. Both values are required, and the build fails without them:
 
@@ -29,7 +29,7 @@ cd squat
 npm run squat:dev
 ```
 
-Open `http://localhost:5173/squat/` and sign in with Google. There is no seed: your first sign-in creates your user and a starter program.
+Open `http://localhost:5173/squat/` and sign in with Google. First sign-in creates your user only. There is no seeded workout.
 
 ## Google OAuth client
 

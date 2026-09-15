@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Spinner } from "@/components/feedback/Spinner";
-import { Badge, Card, PageHeader, Tabs } from "@/components/ui";
+import { Badge, Card, EmptyState, PageHeader, Tabs } from "@/components/ui";
 import { formatKg } from "@/lib/format";
 import { useAsyncValue } from "@/hooks/useAsyncValue";
 import { api } from "@/services/api";
@@ -27,6 +27,15 @@ export function ProgressPage() {
 
   if (error || !data) {
     return <p className={styles.error}>{error?.message ?? "Could not load progress."}</p>;
+  }
+
+  if (!data.series.length && !data.records.length) {
+    return (
+      <EmptyState
+        title="No progress yet"
+        body="Personal records and strength trends appear after you complete workouts."
+      />
+    );
   }
 
   const namedSeries = data.series.map((entry) => ({

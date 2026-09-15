@@ -128,6 +128,12 @@ p {
   border: 1px solid var(--glass-border);
 }
 
+/* GIS iframes inherit color-scheme from <html>. Force light so the button
+   does not invert into a black slab on the dark theme. */
+iframe[src*="accounts.google.com"] {
+  color-scheme: light;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -1,12 +1,11 @@
 import { apiRequest } from "@/services/api/client";
 import { parseWorkoutDetail, type WorkoutDetail } from "@/services/api/map";
-import { workouts } from "@/services/api/mock/data";
 import type { Workout, WorkoutExercise } from "@/types/domain";
 
 export type { WorkoutDetail };
 
 export function listWorkouts(): Promise<readonly Workout[]> {
-  return Promise.resolve(workouts);
+  return Promise.resolve([]);
 }
 
 export async function getWorkoutDetail(

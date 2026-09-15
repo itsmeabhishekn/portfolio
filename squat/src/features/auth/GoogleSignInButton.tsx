@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
-import { useTheme } from "@/hooks/useTheme";
 import {
   googleClientId,
-  loadGoogleIdentity,
+  initializeGoogleIdentity,
 } from "@/features/auth/googleIdentity";
 import styles from "./auth.module.css";
 
@@ -14,12 +13,18 @@ interface GoogleSignInButtonProps {
   onError: (message: string) => void;
 }
 
+function buttonWidth(parent: HTMLElement) {
+  return Math.min(
+    MAX_WIDTH,
+    Math.max(MIN_WIDTH, Math.floor(parent.clientWidth) || MIN_WIDTH),
+  );
+}
+
 export function GoogleSignInButton({
   onCredential,
   onError,
 }: GoogleSignInButtonProps) {
   const host = useRef<HTMLDivElement>(null);
-  const { resolved } = useTheme();
   const clientId = googleClientId();
 
   useEffect(() => {
@@ -29,36 +34,43 @@ export function GoogleSignInButton({
     }
 
     let active = true;
+    let lastWidth = 0;
+    let observer: ResizeObserver | null = null;
 
-    loadGoogleIdentity()
+    const paint = (
+      identity: Awaited<ReturnType<typeof initializeGoogleIdentity>>,
+    ) => {
+      if (!active) {
+        return;
+      }
+      const width = buttonWidth(parent);
+      if (width === lastWidth && parent.childElementCount > 0) {
+        return;
+      }
+      lastWidth = width;
+      parent.replaceChildren();
+      // Always GIS outline on a forced-light well. Dark color-scheme inverts the
+      // iframe; filled_black on this palette reads as a hole in the page.
+      identity.renderButton(parent, {
+        theme: "outline",
+        size: "large",
+        text: "continue_with",
+        shape: "pill",
+        logo_alignment: "left",
+        width,
+      });
+    };
+
+    initializeGoogleIdentity(clientId, onCredential)
       .then((identity) => {
-        if (!active) {
+        paint(identity);
+        if (!active || typeof ResizeObserver === "undefined") {
           return;
         }
-        identity.initialize({
-          client_id: clientId,
-          auto_select: false,
-          cancel_on_tap_outside: true,
-          callback: (response) => {
-            if (response.credential) {
-              onCredential(response.credential);
-            } else {
-              onError("Google did not return a sign-in credential.");
-            }
-          },
+        observer = new ResizeObserver(() => {
+          void initializeGoogleIdentity(clientId, onCredential).then(paint);
         });
-        parent.replaceChildren();
-        identity.renderButton(parent, {
-          theme: resolved === "dark" ? "filled_black" : "outline",
-          size: "large",
-          text: "continue_with",
-          shape: "pill",
-          logo_alignment: "center",
-          width: Math.min(
-            MAX_WIDTH,
-            Math.max(MIN_WIDTH, parent.clientWidth || MIN_WIDTH),
-          ),
-        });
+        observer.observe(parent);
       })
       .catch((error: unknown) => {
         if (active) {
@@ -72,8 +84,9 @@ export function GoogleSignInButton({
 
     return () => {
       active = false;
+      observer?.disconnect();
     };
-  }, [clientId, onCredential, onError, resolved]);
+  }, [clientId, onCredential, onError]);
 
   if (clientId === null) {
     return (
@@ -83,5 +96,9 @@ export function GoogleSignInButton({
     );
   }
 
-  return <div className={styles.host} ref={host} />;
+  return (
+    <div className={styles.host} ref={host}>
+      <div className={styles.placeholder} aria-hidden="true" />
+    </div>
+  );
 }

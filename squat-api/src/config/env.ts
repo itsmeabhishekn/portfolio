@@ -53,12 +53,23 @@ export function validateEnv(
       .join('; ');
     throw new Error(`Invalid environment configuration: ${details}`);
   }
+  parseCorsOrigins(validated.CORS_ORIGINS);
   return validated;
 }
 
 export function parseCorsOrigins(value: string): string[] {
-  return value
+  const origins = value
     .split(',')
-    .map((origin) => origin.trim().replace(/\/$/, ''))
+    .map(normalizeOrigin)
     .filter((origin) => origin.length > 0);
+  if (origins.length === 0) {
+    throw new Error(
+      'Invalid environment configuration: CORS_ORIGINS must list at least one browser origin',
+    );
+  }
+  return origins;
+}
+
+function normalizeOrigin(origin: string): string {
+  return origin.trim().replace(/^['"]+|['"]+$/g, '').replace(/\/$/, '');
 }

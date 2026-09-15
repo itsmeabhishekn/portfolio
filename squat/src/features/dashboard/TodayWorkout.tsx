@@ -17,7 +17,7 @@ export function TodayWorkout({ today }: { today: TodayWorkoutView | null }) {
         <div className={styles.hero}>
           <h2 className={styles.heroName}>No workout planned</h2>
           <p className="t-secondary">
-            You don&apos;t have a workout scheduled yet.
+            You don&apos;t have a program yet, so there is nothing to train today.
           </p>
         </div>
       </section>

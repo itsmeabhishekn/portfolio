@@ -130,7 +130,7 @@ describe('Squat API e2e', () => {
     expect(empty.status).toBe(400);
   });
 
-  it('creates a user with a starter program on first Google sign-in', async () => {
+  it('creates a user on first Google sign-in with no training data', async () => {
     googleAccounts.set('credential-newcomer', {
       sub: 'google-sub-newcomer',
       email: 'newcomer@example.test',
@@ -151,12 +151,13 @@ describe('Squat API e2e', () => {
     expect(me.status).toBe(200);
     expect(me.body.data.displayName).toBe('New Comer');
 
-    // A real user with no data would be useless, so sign-in provisions a program.
     const upcoming = await get('/api/v1/workouts/upcoming', token);
-    expect(upcoming.status).toBe(200);
-    expect(upcoming.body.data.name).toBe('Push A');
-    expect(upcoming.body.data.exercises).toHaveLength(5);
-    expect(upcoming.body.data.program.name).toBe('Push Pull Legs');
+    expect(upcoming.status).toBe(404);
+
+    const programs = await prisma.program.count({
+      where: { userId: signIn.body.data.user.id as string },
+    });
+    expect(programs).toBe(0);
   });
 
   it('reuses the same user on repeat sign-in and refreshes the profile', async () => {
@@ -193,7 +194,7 @@ describe('Squat API e2e', () => {
     const programs = await prisma.program.count({
       where: { userId: first.body.data.user.id as string },
     });
-    expect(programs).toBe(1);
+    expect(programs).toBe(0);
   });
 
   it('keeps each Google identity on its own data', async () => {
@@ -217,32 +218,17 @@ describe('Squat API e2e', () => {
 
     const tokenA = a.body.data.token as string;
     const tokenB = b.body.data.token as string;
+    expect(a.body.data.user.id).not.toBe(b.body.data.user.id);
 
-    const workoutA = await get('/api/v1/workouts/upcoming', tokenA);
-    const workoutB = await get('/api/v1/workouts/upcoming', tokenB);
-    expect(workoutA.body.data.id).not.toBe(workoutB.body.data.id);
+    const upcomingA = await get('/api/v1/workouts/upcoming', tokenA);
+    const upcomingB = await get('/api/v1/workouts/upcoming', tokenB);
+    expect(upcomingA.status).toBe(404);
+    expect(upcomingB.status).toBe(404);
 
-    const started = await post(
-      `/api/v1/workouts/${workoutA.body.data.id}/sessions`,
-      tokenA,
-    );
-    expect(started.status).toBe(200);
-    const sessionId = started.body.data.id as string;
-
-    const asOwner = await get(`/api/v1/workout-sessions/${sessionId}`, tokenA);
-    expect(asOwner.status).toBe(200);
-
-    const asStranger = await get(
-      `/api/v1/workout-sessions/${sessionId}`,
-      tokenB,
-    );
-    expect(asStranger.status).toBe(404);
-
-    const templateAsStranger = await get(
-      `/api/v1/workouts/${workoutA.body.data.id}`,
-      tokenB,
-    );
-    expect(templateAsStranger.status).toBe(404);
+    const seedAsA = await get(`/api/v1/workouts/${seedIds.workoutPush}`, tokenA);
+    const seedAsB = await get(`/api/v1/workouts/${seedIds.workoutPush}`, tokenB);
+    expect(seedAsA.status).toBe(404);
+    expect(seedAsB.status).toBe(404);
   });
 
   it('GET /api/v1/workouts/upcoming returns the next planned workout', async () => {

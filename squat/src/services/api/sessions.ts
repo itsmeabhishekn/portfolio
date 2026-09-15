@@ -1,8 +1,6 @@
 import { apiRequest, notFound } from "@/services/api/client";
 import { parseSessionDetail, type SessionDetail } from "@/services/api/map";
 import { getUpcomingWorkoutDetail } from "@/services/api/workouts";
-import { exercises } from "@/services/api/mock/data";
-import { store } from "@/services/api/mock/store";
 import type {
   PerformedSet,
   SessionExercise,
@@ -13,39 +11,6 @@ import type {
 export type { SessionDetail };
 
 const sessionCache = new Map<string, SessionDetail>();
-
-function historyFromStore(): readonly WorkoutHistoryItem[] {
-  const completed = store.sessions
-    .filter((session) => session.status === "completed")
-    .slice()
-    .sort((a, b) => b.startedAt.localeCompare(a.startedAt));
-
-  return completed.map((session) => {
-    const sessionExs = store.sessionExercises.filter(
-      (item) => item.sessionId === session.id,
-    );
-    const exerciseNames = sessionExs.map((item) => {
-      const exercise = exercises.find((entry) => entry.id === item.exerciseId);
-      return exercise?.name ?? "Exercise";
-    });
-    const sets = store.performedSets.filter((set) =>
-      sessionExs.some((item) => item.id === set.sessionExerciseId),
-    );
-    const volumeKg = sets.reduce((sum, set) => {
-      if (!set.completed || set.weightKg == null || set.reps == null) {
-        return sum;
-      }
-      return sum + set.weightKg * set.reps;
-    }, 0);
-
-    return {
-      session,
-      exerciseNames,
-      volumeKg,
-      setCount: sets.filter((set) => set.completed).length,
-    };
-  });
-}
 
 function cacheSession(detail: SessionDetail): SessionDetail {
   sessionCache.set(detail.session.id, detail);
@@ -149,7 +114,7 @@ export async function getWorkoutTabTarget(): Promise<{
 }
 
 export function listSessions(): Promise<readonly WorkoutSession[]> {
-  return Promise.resolve(store.sessions.slice());
+  return Promise.resolve([]);
 }
 
 export async function getSession(sessionId: string): Promise<WorkoutSession> {
@@ -178,5 +143,5 @@ export async function listSets(
 }
 
 export function listHistory(): Promise<readonly WorkoutHistoryItem[]> {
-  return Promise.resolve(historyFromStore());
+  return Promise.resolve([]);
 }

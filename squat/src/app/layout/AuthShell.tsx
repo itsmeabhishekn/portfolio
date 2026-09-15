@@ -4,7 +4,9 @@ import styles from "./AuthShell.module.css";
 export function AuthShell() {
   return (
     <div className={styles.shell}>
-      <Outlet />
+      <div className={styles.inner}>
+        <Outlet />
+      </div>
     </div>
   );
 }

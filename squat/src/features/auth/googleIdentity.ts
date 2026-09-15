@@ -9,7 +9,7 @@ interface GoogleButtonOptions {
   size: "large";
   text: "continue_with";
   shape: "pill";
-  logo_alignment: "center";
+  logo_alignment: "left" | "center";
   width: number;
 }
 
@@ -19,6 +19,8 @@ interface GoogleAccountsId {
     callback: (response: GoogleCredentialResponse) => void;
     auto_select: boolean;
     cancel_on_tap_outside: boolean;
+    ux_mode?: "popup";
+    use_fedcm_for_prompt?: boolean;
   }): void;
   renderButton(parent: HTMLElement, options: GoogleButtonOptions): void;
   disableAutoSelect(): void;
@@ -78,4 +80,32 @@ export function loadGoogleIdentity(): Promise<GoogleAccountsId> {
   });
 
   return pending;
+}
+
+let initializedClientId: string | null = null;
+let credentialHandler: ((credential: string) => void) | null = null;
+
+export async function initializeGoogleIdentity(
+  clientId: string,
+  onCredential: (credential: string) => void,
+): Promise<GoogleAccountsId> {
+  credentialHandler = onCredential;
+  const identity = await loadGoogleIdentity();
+  if (initializedClientId === clientId) {
+    return identity;
+  }
+  identity.initialize({
+    client_id: clientId,
+    auto_select: false,
+    cancel_on_tap_outside: true,
+    ux_mode: "popup",
+    use_fedcm_for_prompt: false,
+    callback: (response) => {
+      if (response.credential) {
+        credentialHandler?.(response.credential);
+      }
+    },
+  });
+  initializedClientId = clientId;
+  return identity;
 }

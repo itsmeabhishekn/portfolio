@@ -109,15 +109,27 @@ E2E tests expect Postgres to be running.
 
 ## Production deploy
 
+On the API host, from the repo root:
+
+```bash
+./scripts/deploy-api.sh
+```
+
+That fast-forwards `git pull`, runs `prisma migrate deploy`, rebuilds the API
+image, and waits until `http://127.0.0.1:3001/health` is ok. It does not upload
+the frontend; that is still `scripts/deploy-s3.sh`. Set `SKIP_PULL=1` to rebuild
+the current checkout without pulling.
+
 `Dockerfile` builds two targets. `runner` carries production dependencies plus the
 generated Prisma client. `migrator` keeps devDependencies so `prisma migrate deploy`
 runs the CLI version pinned in `package-lock.json` instead of one that `npx` fetches
 from the registry at run time.
 
-Create `.env` on the host with the production `DATABASE_URL`, then:
+Create `.env` on the host with the production `DATABASE_URL` before the first
+deploy. The equivalent compose commands, if you ever need them by hand:
 
 ```bash
-docker compose -f docker-compose.prod.yml run --rm migrate
+docker compose -f docker-compose.prod.yml run --rm --build migrate
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 

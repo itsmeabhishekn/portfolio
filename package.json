@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "bash scripts/dev-site.sh",
+    "dev:next": "next dev",
     "build": "next build && npm run squat:build",
     "start": "next start",
     "lint": "eslint",
     "deploy:s3": "bash scripts/deploy-s3.sh",
     "squat:dev": "npm run dev --prefix squat",
-    "squat:build": "npm run build --prefix squat && rm -rf out/squat && mkdir -p out/squat && cp -a squat/dist/. out/squat/"
+    "squat:build": "npm run build --prefix squat && rm -rf out/squat && mkdir -p out/squat && cp -a squat/dist/. out/squat/ && bash scripts/squat-spa-shells.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.115.0",

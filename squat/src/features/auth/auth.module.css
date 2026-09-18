@@ -164,6 +164,11 @@
   color: #3d4540;
 }
 
+.well a {
+  color: inherit;
+  text-decoration: underline;
+}
+
 .placeholder {
   width: 100%;
   min-height: 2.5rem;

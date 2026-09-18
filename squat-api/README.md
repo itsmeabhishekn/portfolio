@@ -58,7 +58,15 @@ npx prisma migrate dev
 
 The first migration creates the relational schema. The second adds a partial unique index (Prisma cannot express `UNIQUE (...) WHERE status = 'IN_PROGRESS'`) plus check constraints for rep ranges, set numbers, and RPE. The fourth replaces `password_hash` with a unique `google_sub`.
 
-There is no seed and no starter program. Users are created by Google sign-in with no workouts attached. `GET /workouts/upcoming` returns 404 until that user has a program. Test fixtures live in `test/fixtures/` and are excluded from the production build.
+There is no automatic seed. Users are created by Google sign-in with no workouts attached. `GET /workouts/upcoming` returns 404 until that user has a program. Test fixtures live in `test/fixtures/` and are excluded from the production build.
+
+To attach the personal split after you have signed in once:
+
+```bash
+npm run program:import -- --email you@example.com
+```
+
+The catalog is `data/programs/hypertrophy-stability.json`. Edit that file and re-run the command. Unused templates are replaced in place. If the program already has sessions, the importer writes a new active version and leaves history on the old one. It never creates a user.
 
 ## Run
 
@@ -180,7 +188,7 @@ Rotating `SESSION_JWT_SECRET` invalidates every existing session.
 
 ## First sign-in
 
-A new Google identity creates a `User` row only. Programs, workouts, and sessions are not created automatically.
+A new Google identity creates a `User` row only. Programs, workouts, and sessions are not created automatically. Import a catalog onto that user with `npm run program:import`.
 
 ## Intentionally not in this phase
 

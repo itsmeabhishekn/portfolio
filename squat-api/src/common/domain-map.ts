@@ -17,12 +17,7 @@ export type ApiMuscleGroup =
   | 'full_body';
 
 export type ApiEquipment =
-  | 'barbell'
-  | 'dumbbell'
-  | 'machine'
-  | 'cable'
-  | 'bodyweight'
-  | 'other';
+  'barbell' | 'dumbbell' | 'machine' | 'cable' | 'bodyweight' | 'other';
 
 export type ApiSessionStatus = 'in_progress' | 'completed' | 'abandoned';
 
@@ -53,12 +48,49 @@ const STATUS_TO_API: Record<WorkoutSessionStatus, ApiSessionStatus> = {
   ABANDONED: 'abandoned',
 };
 
+const API_TO_MUSCLE = {
+  chest: 'CHEST',
+  back: 'BACK',
+  shoulders: 'SHOULDERS',
+  quads: 'QUADS',
+  hamstrings: 'HAMSTRINGS',
+  glutes: 'GLUTES',
+  arms: 'ARMS',
+  core: 'CORE',
+  full_body: 'FULL_BODY',
+} as const satisfies Record<ApiMuscleGroup, MuscleGroup>;
+
+const API_TO_EQUIPMENT = {
+  barbell: 'BARBELL',
+  dumbbell: 'DUMBBELL',
+  machine: 'MACHINE',
+  cable: 'CABLE',
+  bodyweight: 'BODYWEIGHT',
+  other: 'OTHER',
+} as const satisfies Record<ApiEquipment, Equipment>;
+
 export function toApiMuscleGroup(value: MuscleGroup): ApiMuscleGroup {
   return MUSCLE_TO_API[value];
 }
 
 export function toApiEquipment(value: Equipment): ApiEquipment {
   return EQUIPMENT_TO_API[value];
+}
+
+export function isApiMuscleGroup(value: string): value is ApiMuscleGroup {
+  return Object.hasOwn(API_TO_MUSCLE, value);
+}
+
+export function isApiEquipment(value: string): value is ApiEquipment {
+  return Object.hasOwn(API_TO_EQUIPMENT, value);
+}
+
+export function fromApiMuscleGroup(value: ApiMuscleGroup): MuscleGroup {
+  return API_TO_MUSCLE[value];
+}
+
+export function fromApiEquipment(value: ApiEquipment): Equipment {
+  return API_TO_EQUIPMENT[value];
 }
 
 export function toApiSessionStatus(

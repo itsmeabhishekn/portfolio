@@ -9,7 +9,7 @@ cd "$ROOT"
 
 BUCKET="${S3_BUCKET:-abhishek-portfolio-static-assets}"
 REGION="${AWS_REGION:-us-east-1}"
-DIST="${CLOUDFRONT_DISTRIBUTION_ID:-}"
+DIST="${CLOUDFRONT_DISTRIBUTION_ID:-E2V487SWQND0VX}"
 
 if ! command -v aws >/dev/null 2>&1; then
   if [[ -x "$HOME/.local/bin/aws" ]]; then
@@ -39,6 +39,17 @@ aws s3 sync out/_next/static "s3://${BUCKET}/_next/static" \
   --region "$REGION" \
   --cache-control "public, max-age=31536000, immutable" \
   --metadata-directive REPLACE
+
+# /squat/login (no trailing slash) is a missing S3 key and 403s unless this
+# object exists. Directory index.html covers the slash form.
+if [[ -f out/squat/index.html ]]; then
+  for route in login dashboard programs exercises progress history profile; do
+    aws s3 cp out/squat/index.html "s3://${BUCKET}/squat/${route}" \
+      --region "$REGION" \
+      --content-type "text/html; charset=utf-8" \
+      --cache-control "public, max-age=0, must-revalidate"
+  done
+fi
 
 if [[ -n "$DIST" ]]; then
   aws cloudfront create-invalidation \

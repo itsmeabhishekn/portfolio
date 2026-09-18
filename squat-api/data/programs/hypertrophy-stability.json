@@ -1,0 +1,446 @@
+{
+  "exercises": [
+    {
+      "name": "Dumbbell Romanian Deadlift",
+      "description": "Soft knees, deep hinge back, focus on glute and hamstring stretch.",
+      "primaryMuscleGroup": "hamstrings",
+      "secondaryMuscleGroups": ["glutes"],
+      "equipment": "dumbbell"
+    },
+    {
+      "name": "Seated Leg Curl",
+      "description": "Controlled 2-second eccentric descent.",
+      "primaryMuscleGroup": "hamstrings",
+      "secondaryMuscleGroups": [],
+      "equipment": "machine"
+    },
+    {
+      "name": "Walking Lunge",
+      "description": "10-12 steps per leg. Slight forward torso lean to bias glutes and reduce knee shear.",
+      "primaryMuscleGroup": "glutes",
+      "secondaryMuscleGroups": ["quads"],
+      "equipment": "dumbbell"
+    },
+    {
+      "name": "Standing Calf Raise",
+      "description": "Full pause at the deep stretch.",
+      "primaryMuscleGroup": "quads",
+      "secondaryMuscleGroups": [],
+      "equipment": "machine"
+    },
+    {
+      "name": "Hanging Knee Raise",
+      "description": "Posterior pelvic tilt with no swinging.",
+      "primaryMuscleGroup": "core",
+      "secondaryMuscleGroups": [],
+      "equipment": "bodyweight"
+    },
+    {
+      "name": "Incline Dumbbell Press",
+      "description": "30-degree incline, full range of motion.",
+      "primaryMuscleGroup": "chest",
+      "secondaryMuscleGroups": ["shoulders", "arms"],
+      "equipment": "dumbbell"
+    },
+    {
+      "name": "Lat Pulldown",
+      "description": "Drive elbows straight down to hips.",
+      "primaryMuscleGroup": "back",
+      "secondaryMuscleGroups": ["arms"],
+      "equipment": "cable"
+    },
+    {
+      "name": "Pec Deck Fly",
+      "description": "Deep chest stretch, slow eccentric.",
+      "primaryMuscleGroup": "chest",
+      "secondaryMuscleGroups": [],
+      "equipment": "machine"
+    },
+    {
+      "name": "Seated Cable Row",
+      "description": "Full scapular protraction and retraction.",
+      "primaryMuscleGroup": "back",
+      "secondaryMuscleGroups": ["arms"],
+      "equipment": "cable"
+    },
+    {
+      "name": "High-to-Low Cable Fly",
+      "description": "Squeeze lower pecs at contraction.",
+      "primaryMuscleGroup": "chest",
+      "secondaryMuscleGroups": [],
+      "equipment": "cable"
+    },
+    {
+      "name": "Smith Machine Squat",
+      "description": "Prioritize knee tracking and stop 2 reps shy of failure.",
+      "primaryMuscleGroup": "quads",
+      "secondaryMuscleGroups": ["glutes"],
+      "equipment": "machine"
+    },
+    {
+      "name": "Leg Press",
+      "description": "Low-to-mid foot placement for quad emphasis.",
+      "primaryMuscleGroup": "quads",
+      "secondaryMuscleGroups": ["glutes"],
+      "equipment": "machine"
+    },
+    {
+      "name": "Single-Leg Extension",
+      "description": "12-15 per leg. 1-second pause at full lockout for ACL/VMO stability.",
+      "primaryMuscleGroup": "quads",
+      "secondaryMuscleGroups": [],
+      "equipment": "machine"
+    },
+    {
+      "name": "Seated Calf Raise",
+      "description": "Targets soleus. Full pause at the stretch.",
+      "primaryMuscleGroup": "quads",
+      "secondaryMuscleGroups": [],
+      "equipment": "machine"
+    },
+    {
+      "name": "Pallof Press",
+      "description": "12 per side. Anti-rotation trunk stability.",
+      "primaryMuscleGroup": "core",
+      "secondaryMuscleGroups": [],
+      "equipment": "cable"
+    },
+    {
+      "name": "Machine Shoulder Press",
+      "description": "Slightly tucked elbows to protect rotator cuffs.",
+      "primaryMuscleGroup": "shoulders",
+      "secondaryMuscleGroups": ["arms"],
+      "equipment": "machine"
+    },
+    {
+      "name": "Chest-Supported T-Bar Row",
+      "description": "Chest-supported to save the lower back.",
+      "primaryMuscleGroup": "back",
+      "secondaryMuscleGroups": ["arms"],
+      "equipment": "machine"
+    },
+    {
+      "name": "Cable Lateral Raise",
+      "description": "Raise in the scapular plane. Dumbbells are fine if cables are taken.",
+      "primaryMuscleGroup": "shoulders",
+      "secondaryMuscleGroups": [],
+      "equipment": "cable"
+    },
+    {
+      "name": "Face Pull",
+      "description": "Rear delts and external rotator health.",
+      "primaryMuscleGroup": "shoulders",
+      "secondaryMuscleGroups": ["back"],
+      "equipment": "cable"
+    },
+    {
+      "name": "Dumbbell Shrug",
+      "description": "Pause 1 second at peak contraction.",
+      "primaryMuscleGroup": "back",
+      "secondaryMuscleGroups": [],
+      "equipment": "dumbbell"
+    },
+    {
+      "name": "Incline Dumbbell Curl",
+      "description": "Deep stretch on the biceps long head.",
+      "primaryMuscleGroup": "arms",
+      "secondaryMuscleGroups": [],
+      "equipment": "dumbbell"
+    },
+    {
+      "name": "Overhead Cable Triceps Extension",
+      "description": "Full stretch on the triceps long head.",
+      "primaryMuscleGroup": "arms",
+      "secondaryMuscleGroups": [],
+      "equipment": "cable"
+    },
+    {
+      "name": "Cable Rope Hammer Curl",
+      "description": "Targets brachialis and brachioradialis for arm thickness.",
+      "primaryMuscleGroup": "arms",
+      "secondaryMuscleGroups": [],
+      "equipment": "cable"
+    },
+    {
+      "name": "Triceps Rope Pushdown",
+      "description": "Flared rope finish for lateral and medial heads.",
+      "primaryMuscleGroup": "arms",
+      "secondaryMuscleGroups": [],
+      "equipment": "cable"
+    },
+    {
+      "name": "Ab Wheel Rollout",
+      "description": "Work to technical failure. Resist lumbar hyperextension.",
+      "primaryMuscleGroup": "core",
+      "secondaryMuscleGroups": [],
+      "equipment": "other"
+    }
+  ],
+  "program": {
+    "name": "5-Day Rolling Hypertrophy & Stability Split",
+    "description": "Rolling 5-day hypertrophy and stability block. After each completed session, advance to the next workout; rest days are not part of the rotation.",
+    "isActive": true,
+    "workouts": [
+      {
+        "name": "Lower Body A",
+        "notes": "Hamstrings, glutes, and deep core.",
+        "order": 1,
+        "exercises": [
+          {
+            "exerciseName": "Dumbbell Romanian Deadlift",
+            "order": 1,
+            "targetSets": 3,
+            "repMin": 8,
+            "repMax": 10,
+            "targetWeightKg": null,
+            "restSeconds": 150
+          },
+          {
+            "exerciseName": "Seated Leg Curl",
+            "order": 2,
+            "targetSets": 3,
+            "repMin": 10,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 90
+          },
+          {
+            "exerciseName": "Walking Lunge",
+            "order": 3,
+            "targetSets": 3,
+            "repMin": 10,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 120
+          },
+          {
+            "exerciseName": "Standing Calf Raise",
+            "order": 4,
+            "targetSets": 3,
+            "repMin": 12,
+            "repMax": 15,
+            "targetWeightKg": null,
+            "restSeconds": 60
+          },
+          {
+            "exerciseName": "Hanging Knee Raise",
+            "order": 5,
+            "targetSets": 3,
+            "repMin": 12,
+            "repMax": 15,
+            "targetWeightKg": null,
+            "restSeconds": 60
+          }
+        ]
+      },
+      {
+        "name": "Upper Body A",
+        "notes": "Chest and back antagonist volume.",
+        "order": 2,
+        "exercises": [
+          {
+            "exerciseName": "Incline Dumbbell Press",
+            "order": 1,
+            "targetSets": 3,
+            "repMin": 8,
+            "repMax": 10,
+            "targetWeightKg": null,
+            "restSeconds": 150
+          },
+          {
+            "exerciseName": "Lat Pulldown",
+            "order": 2,
+            "targetSets": 3,
+            "repMin": 8,
+            "repMax": 10,
+            "targetWeightKg": null,
+            "restSeconds": 150
+          },
+          {
+            "exerciseName": "Pec Deck Fly",
+            "order": 3,
+            "targetSets": 3,
+            "repMin": 10,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 90
+          },
+          {
+            "exerciseName": "Seated Cable Row",
+            "order": 4,
+            "targetSets": 3,
+            "repMin": 10,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 120
+          },
+          {
+            "exerciseName": "High-to-Low Cable Fly",
+            "order": 5,
+            "targetSets": 2,
+            "repMin": 12,
+            "repMax": 15,
+            "targetWeightKg": null,
+            "restSeconds": 75
+          }
+        ]
+      },
+      {
+        "name": "Lower Body B",
+        "notes": "Quads, calves, and anti-rotation core.",
+        "order": 3,
+        "exercises": [
+          {
+            "exerciseName": "Smith Machine Squat",
+            "order": 1,
+            "targetSets": 3,
+            "repMin": 6,
+            "repMax": 8,
+            "targetWeightKg": 40,
+            "restSeconds": 180
+          },
+          {
+            "exerciseName": "Leg Press",
+            "order": 2,
+            "targetSets": 3,
+            "repMin": 10,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 120
+          },
+          {
+            "exerciseName": "Single-Leg Extension",
+            "order": 3,
+            "targetSets": 3,
+            "repMin": 12,
+            "repMax": 15,
+            "targetWeightKg": 15,
+            "restSeconds": 90
+          },
+          {
+            "exerciseName": "Seated Calf Raise",
+            "order": 4,
+            "targetSets": 3,
+            "repMin": 12,
+            "repMax": 15,
+            "targetWeightKg": null,
+            "restSeconds": 60
+          },
+          {
+            "exerciseName": "Pallof Press",
+            "order": 5,
+            "targetSets": 3,
+            "repMin": 12,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 60
+          }
+        ]
+      },
+      {
+        "name": "Upper Body B",
+        "notes": "Shoulders and upper back.",
+        "order": 4,
+        "exercises": [
+          {
+            "exerciseName": "Machine Shoulder Press",
+            "order": 1,
+            "targetSets": 3,
+            "repMin": 8,
+            "repMax": 10,
+            "targetWeightKg": null,
+            "restSeconds": 150
+          },
+          {
+            "exerciseName": "Chest-Supported T-Bar Row",
+            "order": 2,
+            "targetSets": 3,
+            "repMin": 8,
+            "repMax": 10,
+            "targetWeightKg": null,
+            "restSeconds": 150
+          },
+          {
+            "exerciseName": "Cable Lateral Raise",
+            "order": 3,
+            "targetSets": 4,
+            "repMin": 12,
+            "repMax": 15,
+            "targetWeightKg": null,
+            "restSeconds": 60
+          },
+          {
+            "exerciseName": "Face Pull",
+            "order": 4,
+            "targetSets": 3,
+            "repMin": 15,
+            "repMax": 15,
+            "targetWeightKg": null,
+            "restSeconds": 60
+          },
+          {
+            "exerciseName": "Dumbbell Shrug",
+            "order": 5,
+            "targetSets": 3,
+            "repMin": 10,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 90
+          }
+        ]
+      },
+      {
+        "name": "Arms & Direct Core",
+        "notes": "Biceps, triceps, brachialis, and anti-extension core.",
+        "order": 5,
+        "exercises": [
+          {
+            "exerciseName": "Incline Dumbbell Curl",
+            "order": 1,
+            "targetSets": 3,
+            "repMin": 10,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 75
+          },
+          {
+            "exerciseName": "Overhead Cable Triceps Extension",
+            "order": 2,
+            "targetSets": 3,
+            "repMin": 10,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 75
+          },
+          {
+            "exerciseName": "Cable Rope Hammer Curl",
+            "order": 3,
+            "targetSets": 3,
+            "repMin": 10,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 75
+          },
+          {
+            "exerciseName": "Triceps Rope Pushdown",
+            "order": 4,
+            "targetSets": 3,
+            "repMin": 12,
+            "repMax": 15,
+            "targetWeightKg": null,
+            "restSeconds": 60
+          },
+          {
+            "exerciseName": "Ab Wheel Rollout",
+            "order": 5,
+            "targetSets": 3,
+            "repMin": 8,
+            "repMax": 12,
+            "targetWeightKg": null,
+            "restSeconds": 90
+          }
+        ]
+      }
+    ]
+  }
+}

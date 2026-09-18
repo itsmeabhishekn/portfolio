@@ -29,11 +29,27 @@ cd squat
 npm run squat:dev
 ```
 
-Open `http://localhost:5173/squat/` and sign in with Google. First sign-in creates your user only. There is no seeded workout.
+Open `http://localhost:5173/squat/` and sign in with Google. First sign-in creates your user only. Load a program from `squat-api`:
+
+```bash
+cd squat-api
+npm run program:import -- --email you@example.com
+```
 
 ## Google OAuth client
 
-One OAuth 2.0 **Web application** client in Google Cloud Console, with `http://localhost:5173` and the deployed origin listed under **Authorized JavaScript origins**. No redirect URI is needed, because Google Identity Services returns the ID token to the page rather than redirecting.
+One OAuth 2.0 **Web application** client in Google Cloud Console. **Authorized JavaScript origins** must include exactly:
+
+```text
+https://abhishekn.dev
+https://www.abhishekn.dev
+http://localhost:5173
+http://localhost:3000
+```
+
+Do not add a path (`/squat`). Do not add the API host. Do not add a LAN IP such as `http://192.168.x.x` — Google rejects those, which is why sign-in from a phone on local Wi‑Fi fails even when a laptop on `localhost` works.
+
+No redirect URI is needed, because Google Identity Services returns the ID token to the page rather than redirecting.
 
 Only the client ID is used. The client secret is not part of this flow and must never be added to the frontend.
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { CANONICAL_ORIGIN, isGoogleSignInOrigin } from "@/config/origin";
 import {
   googleClientId,
   initializeGoogleIdentity,
@@ -26,10 +27,11 @@ export function GoogleSignInButton({
 }: GoogleSignInButtonProps) {
   const host = useRef<HTMLDivElement>(null);
   const clientId = googleClientId();
+  const originAllowed = isGoogleSignInOrigin();
 
   useEffect(() => {
     const parent = host.current;
-    if (clientId === null || parent === null) {
+    if (clientId === null || parent === null || !originAllowed) {
       return;
     }
 
@@ -86,12 +88,24 @@ export function GoogleSignInButton({
       active = false;
       observer?.disconnect();
     };
-  }, [clientId, onCredential, onError]);
+  }, [clientId, onCredential, onError, originAllowed]);
 
   if (clientId === null) {
     return (
       <p className="t-secondary" role="alert">
         Google sign-in is not configured. Set VITE_GOOGLE_CLIENT_ID and rebuild.
+      </p>
+    );
+  }
+
+  if (!originAllowed) {
+    return (
+      <p className="t-secondary" role="alert">
+        Google will not sign in from this address. Open{" "}
+        <a href={`${CANONICAL_ORIGIN}/squat/login`}>
+          {`${CANONICAL_ORIGIN}/squat/login`}
+        </a>
+        .
       </p>
     );
   }

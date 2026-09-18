@@ -1,11 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui";
 import { paths } from "@/config/paths";
+import { UpcomingSwitcher } from "@/features/dashboard/UpcomingSwitcher";
 import { formatMuscleGroupList } from "@/lib/workoutMeta";
 import type { TodayWorkoutView } from "@/features/dashboard/loadDashboard";
 import styles from "./dashboard.module.css";
 
-export function TodayWorkout({ today }: { today: TodayWorkoutView | null }) {
+export function TodayWorkout({
+  today,
+  onUpcomingChanged,
+}: {
+  today: TodayWorkoutView | null;
+  onUpcomingChanged: () => void;
+}) {
   const navigate = useNavigate();
 
   if (!today) {
@@ -30,10 +37,17 @@ export function TodayWorkout({ today }: { today: TodayWorkoutView | null }) {
     );
   }
 
+  const kicker =
+    today.source === "in_progress"
+      ? "In progress"
+      : today.source === "override"
+        ? "Switched for today"
+        : "Today";
+
   return (
     <section className={styles.section} aria-labelledby="today-heading">
       <p className={styles.kicker} id="today-heading">
-        Today
+        {kicker}
       </p>
       <div className={styles.hero}>
         <div className={styles.heroMeta}>
@@ -47,6 +61,11 @@ export function TodayWorkout({ today }: { today: TodayWorkoutView | null }) {
             {today.exerciseCount === 1 ? "exercise" : "exercises"}
             {" · "}~{today.estimatedMinutes} min
           </p>
+          {today.source === "override" && today.queuedName ? (
+            <p className="t-secondary">
+              {today.queuedName} stays queued until you complete or skip it.
+            </p>
+          ) : null}
         </div>
         <Button
           size="lg"
@@ -54,6 +73,12 @@ export function TodayWorkout({ today }: { today: TodayWorkoutView | null }) {
         >
           {today.inProgress ? "Continue workout" : "Start workout"}
         </Button>
+        {today.inProgress ? null : (
+          <UpcomingSwitcher
+            currentId={today.workout.id}
+            onChanged={() => onUpcomingChanged()}
+          />
+        )}
       </div>
     </section>
   );

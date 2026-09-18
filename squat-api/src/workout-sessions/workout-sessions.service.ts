@@ -136,9 +136,7 @@ export class WorkoutSessionsService {
     }
 
     const nextWeight =
-      dto.weightKg !== undefined
-        ? dto.weightKg
-        : decimalToNumber(row.weightKg);
+      dto.weightKg !== undefined ? dto.weightKg : decimalToNumber(row.weightKg);
     const nextReps = dto.reps !== undefined ? dto.reps : row.reps;
 
     if (dto.completed === true && (nextWeight === null || nextReps === null)) {
@@ -201,6 +199,11 @@ export class WorkoutSessionsService {
           completedAt: new Date(),
         },
       });
+      await this.workouts.advanceAfterComplete(
+        tx,
+        currentUserId,
+        session.workoutId,
+      );
     });
 
     return this.getById(sessionId, currentUserId);

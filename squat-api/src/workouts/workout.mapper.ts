@@ -17,6 +17,7 @@ import type {
   WorkoutSummaryDto,
   WorkoutTemplateResponseDto,
 } from './dto/workout-response.dto.js';
+import type { UpcomingSource } from './rotation.js';
 
 type WorkoutWithRelations = Workout & {
   program: Program;
@@ -87,10 +88,18 @@ export function toWorkoutSummaryDto(
 export function toWorkoutTemplateDto(
   workout: WorkoutWithRelations,
   inProgress: boolean,
+  upcoming?: {
+    source: UpcomingSource;
+    queuedName: string | null;
+    isUpcoming: boolean;
+  },
 ): WorkoutTemplateResponseDto {
   const summary = toWorkoutSummaryDto(workout, inProgress);
   return {
     ...summary,
     exercises: workout.workoutExercises.map(toWorkoutExerciseDto),
+    source: upcoming?.source,
+    queuedName: upcoming?.queuedName ?? null,
+    isUpcoming: upcoming?.isUpcoming ?? false,
   };
 }

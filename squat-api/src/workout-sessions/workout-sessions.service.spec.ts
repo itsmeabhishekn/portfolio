@@ -1,4 +1,8 @@
-import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Prisma } from '@prisma/client';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
@@ -16,6 +20,7 @@ describe('WorkoutSessionsService', () => {
 
   const workouts = {
     assertOwned: jest.fn(),
+    advanceAfterComplete: jest.fn(),
   };
 
   let service: WorkoutSessionsService;
@@ -332,7 +337,8 @@ describe('WorkoutSessionsService', () => {
 
   it('rejects completing a session with incomplete sets', async () => {
     prisma.$transaction.mockImplementation(
-      async (callback: (tx: typeof prisma) => Promise<void>) => callback(prisma),
+      async (callback: (tx: typeof prisma) => Promise<void>) =>
+        callback(prisma),
     );
     prisma.workoutSession.findFirst.mockResolvedValue({
       id: 'session-1',
@@ -341,20 +347,22 @@ describe('WorkoutSessionsService', () => {
       exercises: [{ sets: [{ completedAt: null }] }],
     });
 
-    await expect(service.complete('session-1', 'user-1')).rejects.toBeInstanceOf(
-      BadRequestException,
-    );
+    await expect(
+      service.complete('session-1', 'user-1'),
+    ).rejects.toBeInstanceOf(BadRequestException);
     expect(prisma.workoutSession.update).not.toHaveBeenCalled();
   });
 
   it('completes an in-progress session when all sets are done', async () => {
     prisma.$transaction.mockImplementation(
-      async (callback: (tx: typeof prisma) => Promise<void>) => callback(prisma),
+      async (callback: (tx: typeof prisma) => Promise<void>) =>
+        callback(prisma),
     );
     prisma.workoutSession.findFirst
       .mockResolvedValueOnce({
         id: 'session-1',
         userId: 'user-1',
+        workoutId: 'workout-1',
         status: 'IN_PROGRESS',
         exercises: [{ sets: [{ completedAt: new Date() }] }],
       })
@@ -369,16 +377,19 @@ describe('WorkoutSessionsService', () => {
         exercises: [],
       });
     prisma.workoutSession.update.mockResolvedValue({});
+    workouts.advanceAfterComplete.mockResolvedValue(undefined);
 
     const result = await service.complete('session-1', 'user-1');
     expect(prisma.workoutSession.update).toHaveBeenCalled();
+    expect(workouts.advanceAfterComplete).toHaveBeenCalled();
     expect(result.status).toBe('completed');
     expect(result.completedAt).not.toBeNull();
   });
 
   it('does not complete another users session', async () => {
     prisma.$transaction.mockImplementation(
-      async (callback: (tx: typeof prisma) => Promise<void>) => callback(prisma),
+      async (callback: (tx: typeof prisma) => Promise<void>) =>
+        callback(prisma),
     );
     prisma.workoutSession.findFirst.mockResolvedValue(null);
 
@@ -389,7 +400,8 @@ describe('WorkoutSessionsService', () => {
 
   it('returns an already completed session without rewriting it', async () => {
     prisma.$transaction.mockImplementation(
-      async (callback: (tx: typeof prisma) => Promise<void>) => callback(prisma),
+      async (callback: (tx: typeof prisma) => Promise<void>) =>
+        callback(prisma),
     );
     prisma.workoutSession.findFirst
       .mockResolvedValueOnce({

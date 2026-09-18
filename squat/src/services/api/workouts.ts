@@ -50,3 +50,18 @@ export async function getUpcomingWorkoutId(): Promise<string | null> {
   const workout = await getUpcomingWorkout();
   return workout?.id ?? null;
 }
+
+export function skipUpcoming(): Promise<WorkoutDetail> {
+  return apiRequest("/workouts/upcoming/skip", {
+    method: "POST",
+    parse: parseWorkoutDetail,
+  });
+}
+
+export function chooseUpcoming(workoutId: string): Promise<WorkoutDetail> {
+  return apiRequest("/workouts/upcoming/choose", {
+    method: "POST",
+    body: { workoutId },
+    parse: parseWorkoutDetail,
+  });
+}

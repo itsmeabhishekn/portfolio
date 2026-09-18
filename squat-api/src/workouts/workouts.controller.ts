@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -17,6 +18,7 @@ import { CurrentUser } from '../current-user/current-user.decorator.js';
 import type { AuthenticatedUser } from '../current-user/authenticated-user.js';
 import { WorkoutSessionsService } from '../workout-sessions/workout-sessions.service.js';
 import { WorkoutSessionResponseDto } from '../workout-sessions/dto/session-response.dto.js';
+import { ChooseUpcomingDto } from './dto/choose-upcoming.dto.js';
 import {
   WorkoutSummaryDto,
   WorkoutTemplateResponseDto,
@@ -46,6 +48,32 @@ export class WorkoutsController {
     @CurrentUser() user: AuthenticatedUser,
   ): Promise<WorkoutTemplateResponseDto> {
     return this.workouts.getUpcoming(user.id);
+  }
+
+  @Post('upcoming/skip')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Skip the current suggested day without logging a session',
+  })
+  @ApiOkResponse({ type: WorkoutTemplateResponseDto })
+  skipUpcoming(
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<WorkoutTemplateResponseDto> {
+    return this.workouts.skipUpcoming(user.id);
+  }
+
+  @Post('upcoming/choose')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary:
+      'Train a different program day today without skipping the queued day',
+  })
+  @ApiOkResponse({ type: WorkoutTemplateResponseDto })
+  chooseUpcoming(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() body: ChooseUpcomingDto,
+  ): Promise<WorkoutTemplateResponseDto> {
+    return this.workouts.chooseUpcoming(user.id, body.workoutId);
   }
 
   @Get(':workoutId')

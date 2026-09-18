@@ -12,6 +12,7 @@ import {
   estimateWorkoutMinutes,
   muscleGroupsFromExercises,
 } from "@/lib/workoutMeta";
+import { UpcomingSwitcher } from "@/features/dashboard/UpcomingSwitcher";
 import { ExerciseCard } from "@/features/workouts/ExerciseCard";
 import { StartWorkoutButton } from "@/features/workouts/StartWorkoutButton";
 import { WorkoutHeader } from "@/features/workouts/WorkoutHeader";
@@ -23,6 +24,7 @@ interface TemplateData {
   programName: string;
   rows: readonly { item: WorkoutExercise; exercise: Exercise }[];
   inProgress: boolean;
+  isUpcoming: boolean;
 }
 
 async function loadTemplate(workoutId: string): Promise<TemplateData> {
@@ -45,6 +47,7 @@ async function loadTemplate(workoutId: string): Promise<TemplateData> {
       return { item, exercise };
     }),
     inProgress: detail.inProgress,
+    isUpcoming: detail.isUpcoming,
   };
 }
 
@@ -140,6 +143,19 @@ export function WorkoutTemplatePage() {
           </div>
         </section>
       )}
+
+      {data.isUpcoming && !data.inProgress ? (
+        <UpcomingSwitcher
+          currentId={data.workout.id}
+          onChanged={(next) => {
+            if (next.workout.id !== data.workout.id) {
+              navigate(paths.workoutTemplate(next.workout.id), { replace: true });
+            } else {
+              reload();
+            }
+          }}
+        />
+      ) : null}
 
       {data.rows.length > 0 ? (
         <StartWorkoutButton

@@ -46,9 +46,17 @@ const SESSION_STATUSES: readonly SessionStatus[] = [
   "abandoned",
 ];
 
+const UPCOMING_SOURCES: readonly UpcomingSource[] = [
+  "in_progress",
+  "rotation",
+  "override",
+];
+
 const RPE_VALUES: readonly Rpe[] = [
   1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10,
 ];
+
+export type UpcomingSource = "in_progress" | "rotation" | "override";
 
 export interface WorkoutDetail {
   workout: Workout;
@@ -59,6 +67,9 @@ export interface WorkoutDetail {
   exerciseCount: number;
   estimatedMinutes: number;
   inProgress: boolean;
+  source: UpcomingSource | null;
+  queuedName: string | null;
+  isUpcoming: boolean;
 }
 
 export interface SessionBlock {
@@ -371,6 +382,18 @@ export function parseWorkoutDetail(value: unknown): WorkoutDetail {
       "workout.estimatedMinutes",
     ),
     inProgress: asBoolean(value.inProgress, "workout.inProgress"),
+    source:
+      value.source === undefined
+        ? null
+        : parseUnion(value.source, UPCOMING_SOURCES, "workout.source"),
+    queuedName:
+      value.queuedName === undefined
+        ? null
+        : asNullableString(value.queuedName, "workout.queuedName"),
+    isUpcoming:
+      value.isUpcoming === undefined
+        ? false
+        : asBoolean(value.isUpcoming, "workout.isUpcoming"),
   };
 }
 

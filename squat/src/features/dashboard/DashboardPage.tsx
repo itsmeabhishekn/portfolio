@@ -51,7 +51,7 @@ export function DashboardPage() {
         <p className={styles.prompt}>Ready for your next workout?</p>
       </header>
 
-      <TodayWorkout today={data.today} />
+      <TodayWorkout today={data.today} onUpcomingChanged={reload} />
       <RecentWorkout recent={data.recent} />
       <ProgressSnapshot pr={data.pr} streak={data.streak} />
     </div>

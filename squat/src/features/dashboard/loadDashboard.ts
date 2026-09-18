@@ -1,4 +1,5 @@
 import { api } from "@/services/api";
+import type { UpcomingSource } from "@/services/api/map";
 import type {
   MuscleGroup,
   Program,
@@ -13,6 +14,8 @@ export interface TodayWorkoutView {
   exerciseCount: number;
   estimatedMinutes: number;
   inProgress: boolean;
+  source: UpcomingSource | null;
+  queuedName: string | null;
 }
 
 export interface ProgressPrView {
@@ -41,6 +44,8 @@ export async function loadDashboard(): Promise<DashboardData> {
           exerciseCount: todayDetail.exerciseCount,
           estimatedMinutes: todayDetail.estimatedMinutes,
           inProgress: todayDetail.inProgress,
+          source: todayDetail.source,
+          queuedName: todayDetail.queuedName,
         }
       : null,
     recent: null,

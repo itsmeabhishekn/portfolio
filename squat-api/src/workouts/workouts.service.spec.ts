@@ -8,7 +8,7 @@ describe('WorkoutsService', () => {
   const prisma = {
     workout: { findFirst: jest.fn(), findMany: jest.fn() },
     workoutSession: { findFirst: jest.fn(), findMany: jest.fn() },
-    program: { findFirst: jest.fn() },
+    program: { findFirst: jest.fn(), update: jest.fn() },
   };
 
   let service: WorkoutsService;
@@ -47,6 +47,92 @@ describe('WorkoutsService', () => {
           id: '33333333-3333-4333-8333-333333333331',
           program: { userId: 'other-user' },
         },
+      }),
+    );
+  });
+
+  it('skips the shown day and queues the next template', async () => {
+    let nextId = 'push';
+    prisma.workoutSession.findFirst.mockResolvedValue(null);
+    prisma.program.findFirst.mockImplementation(async () => ({
+      id: 'p1',
+      userId: 'user-1',
+      nextWorkoutId: nextId,
+      overrideWorkoutId: null,
+      workouts: [
+        { id: 'push', name: 'Push A' },
+        { id: 'pull', name: 'Pull A' },
+      ],
+    }));
+    prisma.program.update.mockImplementation(
+      async (args: { data: { nextWorkoutId: string } }) => {
+        nextId = args.data.nextWorkoutId;
+        return {};
+      },
+    );
+    prisma.workout.findFirst.mockResolvedValue({
+      id: 'pull',
+      name: 'Pull A',
+      notes: null,
+      order: 2,
+      program: { id: 'p1', name: 'PPL', description: '' },
+      workoutExercises: [],
+    });
+
+    const result = await service.skipUpcoming('user-1');
+    expect(result.id).toBe('pull');
+    expect(prisma.program.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: { nextWorkoutId: 'pull', overrideWorkoutId: null },
+      }),
+    );
+  });
+
+  it('chooses another day today without advancing the rotation cursor', async () => {
+    prisma.workoutSession.findFirst.mockResolvedValue(null);
+    prisma.program.findFirst.mockResolvedValue({
+      id: 'p1',
+      userId: 'user-1',
+      nextWorkoutId: 'push',
+      overrideWorkoutId: null,
+      workouts: [
+        { id: 'push', name: 'Push A' },
+        { id: 'pull', name: 'Pull A' },
+      ],
+    });
+    prisma.program.update.mockResolvedValue({});
+    prisma.workout.findFirst.mockResolvedValue({
+      id: 'pull',
+      name: 'Pull A',
+      notes: null,
+      order: 2,
+      program: { id: 'p1', name: 'PPL', description: '' },
+      workoutExercises: [],
+    });
+
+    await service.chooseUpcoming('user-1', 'pull');
+    expect(prisma.program.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: { overrideWorkoutId: 'pull' },
+      }),
+    );
+  });
+
+  it('advances the cursor only when the completed day was queued', async () => {
+    prisma.workout.findFirst.mockResolvedValue({
+      id: 'push',
+      program: {
+        id: 'p1',
+        nextWorkoutId: 'push',
+        workouts: [{ id: 'push' }, { id: 'pull' }],
+      },
+    });
+    prisma.program.update.mockResolvedValue({});
+
+    await service.advanceAfterComplete(prisma, 'user-1', 'push');
+    expect(prisma.program.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: { nextWorkoutId: 'pull', overrideWorkoutId: null },
       }),
     );
   });

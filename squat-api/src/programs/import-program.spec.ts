@@ -54,6 +54,9 @@ function fakeTx(options?: {
         name: 'Lat Pulldown',
       })),
     },
+    workout: {
+      findFirst: jest.fn(async () => ({ id: 'workout-1' })),
+    },
     program: {
       findFirst: jest.fn(async () =>
         options?.latestProgramId ? { id: options.latestProgramId } : null,
@@ -61,6 +64,7 @@ function fakeTx(options?: {
       delete: jest.fn(async () => ({ id: options?.latestProgramId })),
       updateMany: jest.fn(async () => ({ count: 1 })),
       create: jest.fn(async () => ({ id: 'program-new' })),
+      update: jest.fn(async () => ({ id: 'program-new' })),
     },
     workoutSession: {
       count: jest.fn(async () => options?.sessionCount ?? 0),

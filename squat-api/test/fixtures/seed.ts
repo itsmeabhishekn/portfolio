@@ -296,6 +296,11 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
+  await prisma.program.update({
+    where: { id: ids.program },
+    data: { nextWorkoutId: ids.workoutPush },
+  });
+
   await createCompletedSession(prisma, {
     id: ids.sessionPush,
     workoutId: ids.workoutPush,

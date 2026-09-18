@@ -116,6 +116,18 @@ export async function importProgramForUser(
     select: { id: true },
   });
 
+  const firstWorkout = await tx.workout.findFirst({
+    where: { programId: program.id },
+    orderBy: { order: 'asc' },
+    select: { id: true },
+  });
+  if (firstWorkout) {
+    await tx.program.update({
+      where: { id: program.id },
+      data: { nextWorkoutId: firstWorkout.id },
+    });
+  }
+
   return {
     action,
     programId: program.id,

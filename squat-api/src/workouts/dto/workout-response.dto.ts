@@ -175,4 +175,15 @@ export class WorkoutTemplateResponseDto {
 
   @ApiProperty({ type: [WorkoutExerciseResponseDto] })
   exercises: WorkoutExerciseResponseDto[];
+
+  @ApiPropertyOptional({
+    enum: ['in_progress', 'rotation', 'override'],
+  })
+  source?: 'in_progress' | 'rotation' | 'override';
+
+  @ApiPropertyOptional()
+  queuedName?: string | null;
+
+  @ApiPropertyOptional()
+  isUpcoming?: boolean;
 }

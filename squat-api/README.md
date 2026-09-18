@@ -110,6 +110,9 @@ Product routes are prefixed with `/api/v1`. Health and Swagger are not.
 | `GET` | `/api/v1/auth/me` | The authenticated user |
 | `GET` | `/api/v1/exercises` | Shared exercise catalog |
 | `GET` | `/api/v1/exercises/:exerciseId` | One catalog exercise |
+| `GET` | `/api/v1/programs` | Programs for the current user |
+| `GET` | `/api/v1/programs/:programId` | One program and its workout templates |
+| `GET` | `/api/v1/workouts` | Workout templates on the active program |
 | `GET` | `/api/v1/workouts/upcoming` | Next planned workout for the current user |
 | `GET` | `/api/v1/workouts/:workoutId` | Workout template (prescription only) |
 | `GET` | `/api/v1/workouts/:workoutId/sessions/in-progress` | Active session, or 404 |

@@ -1,49 +1,10 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Spinner } from "@/components/feedback/Spinner";
-import { Card, EmptyState, PageHeader } from "@/components/ui";
-import { paths } from "@/config/paths";
+import { PageHeader } from "@/components/ui";
 import { useAsyncValue } from "@/hooks/useAsyncValue";
-import { formatMuscleGroup } from "@/lib/workoutMeta";
+import { formatEquipment, formatMuscleGroup } from "@/lib/workoutMeta";
 import { api } from "@/services/api";
 import styles from "./pages.module.css";
-
-export function ExercisesPage() {
-  const { data, error, loading } = useAsyncValue(() => api.exercises.listExercises());
-
-  if (loading) {
-    return <Spinner label="Loading exercises" />;
-  }
-
-  if (error) {
-    return <p className={styles.error}>{error.message}</p>;
-  }
-
-  if (!data?.length) {
-    return (
-      <EmptyState
-        title="No exercises"
-        body="The catalog is empty until the taxonomy is imported."
-      />
-    );
-  }
-
-  return (
-    <div className={styles.stack}>
-      <PageHeader eyebrow="Library" title="Exercises" />
-      {data.map((exercise) => (
-        <Card key={exercise.id}>
-          <h2 className="t-exercise">{exercise.name}</h2>
-          <p className="t-secondary">
-            {formatMuscleGroup(exercise.muscleGroup)} · {exercise.equipment}
-          </p>
-          <Link className={styles.linkish} to={paths.exercise(exercise.id)}>
-            History
-          </Link>
-        </Card>
-      ))}
-    </div>
-  );
-}
 
 export function ExerciseDetailPage() {
   const { exerciseId } = useParams();
@@ -62,12 +23,18 @@ export function ExerciseDetailPage() {
     return <p className={styles.error}>{error?.message ?? "Exercise not found."}</p>;
   }
 
+  const focus = data.focus ?? formatMuscleGroup(data.muscleGroup);
+  const region = data.region ?? formatMuscleGroup(data.muscleGroup);
+  const subtitle = [region, focus, formatEquipment(data.equipment)]
+    .filter((part, index, parts) => parts.indexOf(part) === index)
+    .join(" · ");
+
   return (
     <div className={styles.stack}>
       <PageHeader
-        eyebrow={data.equipment}
+        eyebrow={data.targetSubdivision ?? focus}
         title={data.name}
-        description={`${formatMuscleGroup(data.muscleGroup)} · personal records and session history will expand here.`}
+        description={`${subtitle}. Personal records and session history will expand here.`}
       />
     </div>
   );

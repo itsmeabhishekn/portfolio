@@ -19,6 +19,12 @@ export function TodayWorkout({ today }: { today: TodayWorkoutView | null }) {
           <p className="t-secondary">
             You don&apos;t have a program yet, so there is nothing to train today.
           </p>
+          <Button
+            variant="secondary"
+            onClick={() => navigate(paths.library)}
+          >
+            Open library
+          </Button>
         </div>
       </section>
     );

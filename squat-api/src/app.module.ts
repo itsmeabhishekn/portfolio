@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { validateEnv } from './config/env.js';
 import { DatabaseModule } from './database/database.module.js';
 import { HealthModule } from './health/health.module.js';
+import { ProgramsModule } from './programs/programs.module.js';
 import { WorkoutSessionsModule } from './workout-sessions/workout-sessions.module.js';
 import { WorkoutsModule } from './workouts/workouts.module.js';
 import { ExercisesModule } from './exercises/exercises.module.js';
@@ -20,6 +21,7 @@ import { ExercisesModule } from './exercises/exercises.module.js';
     DatabaseModule,
     AuthModule,
     HealthModule,
+    ProgramsModule,
     WorkoutsModule,
     WorkoutSessionsModule,
     ExercisesModule,

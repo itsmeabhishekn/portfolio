@@ -56,6 +56,69 @@ export class ProgramSummaryDto {
   description: string;
 }
 
+export class WorkoutSummaryDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiPropertyOptional()
+  notes: string | null;
+
+  @ApiProperty()
+  order: number;
+
+  @ApiProperty({ type: ProgramSummaryDto })
+  program: ProgramSummaryDto;
+
+  @ApiProperty({ type: [String] })
+  muscleGroups: ApiMuscleGroup[];
+
+  @ApiProperty()
+  exerciseCount: number;
+
+  @ApiProperty()
+  estimatedMinutes: number;
+
+  @ApiProperty()
+  inProgress: boolean;
+}
+
+export class ProgramListItemDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  description: string;
+
+  @ApiProperty()
+  isActive: boolean;
+
+  @ApiProperty()
+  workoutCount: number;
+}
+
+export class ProgramDetailDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  description: string;
+
+  @ApiProperty()
+  isActive: boolean;
+
+  @ApiProperty({ type: [WorkoutSummaryDto] })
+  workouts: WorkoutSummaryDto[];
+}
+
 export class WorkoutExerciseResponseDto {
   @ApiProperty()
   id: string;

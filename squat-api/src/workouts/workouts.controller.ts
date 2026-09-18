@@ -17,7 +17,10 @@ import { CurrentUser } from '../current-user/current-user.decorator.js';
 import type { AuthenticatedUser } from '../current-user/authenticated-user.js';
 import { WorkoutSessionsService } from '../workout-sessions/workout-sessions.service.js';
 import { WorkoutSessionResponseDto } from '../workout-sessions/dto/session-response.dto.js';
-import { WorkoutTemplateResponseDto } from './dto/workout-response.dto.js';
+import {
+  WorkoutSummaryDto,
+  WorkoutTemplateResponseDto,
+} from './dto/workout-response.dto.js';
 import { WorkoutsService } from './workouts.service.js';
 
 @ApiTags('workouts')
@@ -27,6 +30,13 @@ export class WorkoutsController {
     private readonly workouts: WorkoutsService,
     private readonly sessions: WorkoutSessionsService,
   ) {}
+
+  @Get()
+  @ApiOperation({ summary: 'List workout templates on the active program' })
+  @ApiOkResponse({ type: [WorkoutSummaryDto] })
+  list(@CurrentUser() user: AuthenticatedUser): Promise<WorkoutSummaryDto[]> {
+    return this.workouts.listForUser(user.id);
+  }
 
   @Get('upcoming')
   @ApiOperation({ summary: 'Get the current user upcoming workout template' })

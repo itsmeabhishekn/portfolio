@@ -1,1 +1,1 @@
-export type NavKey = "home" | "workout" | "progress" | "history" | "profile";
+export type NavKey = "home" | "workout" | "library" | "progress" | "profile";

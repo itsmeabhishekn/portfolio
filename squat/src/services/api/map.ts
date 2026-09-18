@@ -13,6 +13,8 @@ import type {
   Workout,
   WorkoutExercise,
   WorkoutSession,
+  WorkoutSummary,
+  ProgramListItem,
 } from "@/types/domain";
 
 const MUSCLE_GROUPS: readonly MuscleGroup[] = [
@@ -106,6 +108,16 @@ function asNullableString(value: unknown, field: string): string | null {
   return value;
 }
 
+function asOptionalString(value: unknown, field: string): string | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
+  if (typeof value !== "string") {
+    throw unexpected(field);
+  }
+  return value.length === 0 ? null : value;
+}
+
 function asNumber(value: unknown, field: string): number {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     throw unexpected(field);
@@ -190,6 +202,12 @@ export function parseExercise(value: unknown): Exercise {
       "exercise.primaryMuscleGroup",
     ),
     equipment: asEquipment(value.equipment, "exercise.equipment"),
+    region: asOptionalString(value.region, "exercise.region"),
+    focus: asOptionalString(value.focus, "exercise.focus"),
+    targetSubdivision: asOptionalString(
+      value.targetSubdivision,
+      "exercise.targetSubdivision",
+    ),
   };
 }
 
@@ -238,7 +256,84 @@ function parseProgram(value: unknown): Program {
     userId: "",
     name: asString(value.name, "program.name"),
     description: asString(value.description, "program.description"),
+    isActive: value.isActive === undefined ? true : asBoolean(value.isActive, "program.isActive"),
     workoutIds: [],
+  };
+}
+
+export function parseProgramListItem(value: unknown): ProgramListItem {
+  if (!isRecord(value)) {
+    throw unexpected("program");
+  }
+  return {
+    id: asString(value.id, "program.id"),
+    name: asString(value.name, "program.name"),
+    description: asString(value.description, "program.description"),
+    isActive: asBoolean(value.isActive, "program.isActive"),
+    workoutCount: asNumber(value.workoutCount, "program.workoutCount"),
+  };
+}
+
+export function parseProgramList(value: unknown): ProgramListItem[] {
+  if (!Array.isArray(value)) {
+    throw unexpected("programs");
+  }
+  return value.map(parseProgramListItem);
+}
+
+export function parseWorkoutSummary(value: unknown): WorkoutSummary {
+  if (!isRecord(value)) {
+    throw unexpected("workout");
+  }
+  const program = parseProgram(value.program);
+  return {
+    id: asString(value.id, "workout.id"),
+    name: asString(value.name, "workout.name"),
+    notes: asNullableString(value.notes, "workout.notes"),
+    order: asNumber(value.order, "workout.order"),
+    programId: program.id,
+    programName: program.name,
+    muscleGroups: asStringArray(
+      value.muscleGroups,
+      "workout.muscleGroups",
+    ).map((group) => asMuscleGroup(group, "workout.muscleGroups")),
+    exerciseCount: asNumber(value.exerciseCount, "workout.exerciseCount"),
+    estimatedMinutes: asNumber(
+      value.estimatedMinutes,
+      "workout.estimatedMinutes",
+    ),
+    inProgress: asBoolean(value.inProgress, "workout.inProgress"),
+  };
+}
+
+export function parseWorkoutSummaryList(value: unknown): WorkoutSummary[] {
+  if (!Array.isArray(value)) {
+    throw unexpected("workouts");
+  }
+  return value.map(parseWorkoutSummary);
+}
+
+export function parseProgramDetail(value: unknown): {
+  program: Program;
+  workouts: WorkoutSummary[];
+} {
+  if (!isRecord(value)) {
+    throw unexpected("program");
+  }
+  if (!Array.isArray(value.workouts)) {
+    throw unexpected("program.workouts");
+  }
+  const workouts = value.workouts.map(parseWorkoutSummary);
+  return {
+    program: {
+      id: asString(value.id, "program.id"),
+      userId: "",
+      name: asString(value.name, "program.name"),
+      description: asString(value.description, "program.description"),
+      isActive: asBoolean(value.isActive, "program.isActive"),
+      workoutIds: workouts.map((workout) => workout.id),
+    },
+    workouts,
   };
 }
 

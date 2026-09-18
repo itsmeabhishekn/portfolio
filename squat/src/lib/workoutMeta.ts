@@ -1,4 +1,4 @@
-import type { Exercise, MuscleGroup, WorkoutExercise } from "@/types/domain";
+import type { Equipment, Exercise, MuscleGroup, WorkoutExercise } from "@/types/domain";
 
 const MUSCLE_LABELS: Record<MuscleGroup, string> = {
   chest: "Chest",
@@ -18,6 +18,86 @@ const WORK_SECONDS_PER_SET = 40;
 
 export function formatMuscleGroup(group: MuscleGroup): string {
   return MUSCLE_LABELS[group];
+}
+
+const EQUIPMENT_LABELS: Record<Equipment, string> = {
+  barbell: "Barbell",
+  dumbbell: "Dumbbell",
+  machine: "Machine",
+  cable: "Cable",
+  bodyweight: "Bodyweight",
+  other: "Other",
+};
+
+export function formatEquipment(equipment: Equipment): string {
+  return EQUIPMENT_LABELS[equipment];
+}
+
+const REGION_ORDER = [
+  "Chest",
+  "Back",
+  "Shoulders",
+  "Arms",
+  "Legs",
+  "Core",
+] as const;
+
+export interface ExerciseFocusGroup {
+  focus: string;
+  exercises: readonly Exercise[];
+}
+
+export interface ExerciseRegionGroup {
+  region: string;
+  groups: readonly ExerciseFocusGroup[];
+}
+
+export function groupExercisesByRegion(
+  exercises: readonly Exercise[],
+): ExerciseRegionGroup[] {
+  const regions = new Map<string, Map<string, Exercise[]>>();
+
+  for (const exercise of exercises) {
+    const region = exercise.region ?? formatMuscleGroup(exercise.muscleGroup);
+    const focus = exercise.focus ?? formatMuscleGroup(exercise.muscleGroup);
+    let focuses = regions.get(region);
+    if (!focuses) {
+      focuses = new Map();
+      regions.set(region, focuses);
+    }
+    const bucket = focuses.get(focus);
+    if (bucket) {
+      bucket.push(exercise);
+    } else {
+      focuses.set(focus, [exercise]);
+    }
+  }
+
+  const names = [...regions.keys()].sort((left, right) => {
+    const leftRank = REGION_ORDER.indexOf(
+      left as (typeof REGION_ORDER)[number],
+    );
+    const rightRank = REGION_ORDER.indexOf(
+      right as (typeof REGION_ORDER)[number],
+    );
+    const leftOrder = leftRank === -1 ? REGION_ORDER.length : leftRank;
+    const rightOrder = rightRank === -1 ? REGION_ORDER.length : rightRank;
+    if (leftOrder !== rightOrder) {
+      return leftOrder - rightOrder;
+    }
+    return left.localeCompare(right);
+  });
+
+  return names.map((region) => {
+    const focuses = regions.get(region);
+    return {
+      region,
+      groups: [...(focuses?.entries() ?? [])].map(([focus, items]) => ({
+        focus,
+        exercises: items,
+      })),
+    };
+  });
 }
 
 export function uniqueMuscleGroups(

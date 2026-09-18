@@ -43,11 +43,13 @@ export function ProgressIcon(props: IconProps) {
   );
 }
 
-export function HistoryIcon(props: IconProps) {
+export function LibraryIcon(props: IconProps) {
   return (
     <Svg {...props}>
-      <circle cx="12" cy="12" r="8" />
-      <path d="M12 8v5l3 2" />
+      <rect x="4" y="4" width="7" height="7" rx="1.2" />
+      <rect x="13" y="4" width="7" height="7" rx="1.2" />
+      <rect x="4" y="13" width="7" height="7" rx="1.2" />
+      <rect x="13" y="13" width="7" height="7" rx="1.2" />
     </Svg>
   );
 }

@@ -59,6 +59,9 @@ export interface Exercise {
   name: string;
   muscleGroup: MuscleGroup;
   equipment: Equipment;
+  region: string | null;
+  focus: string | null;
+  targetSubdivision: string | null;
 }
 
 export interface Program {
@@ -66,7 +69,29 @@ export interface Program {
   userId: string;
   name: string;
   description: string;
+  isActive: boolean;
   workoutIds: readonly string[];
+}
+
+export interface ProgramListItem {
+  id: string;
+  name: string;
+  description: string;
+  isActive: boolean;
+  workoutCount: number;
+}
+
+export interface WorkoutSummary {
+  id: string;
+  name: string;
+  notes: string | null;
+  order: number;
+  programId: string;
+  programName: string;
+  muscleGroups: readonly MuscleGroup[];
+  exerciseCount: number;
+  estimatedMinutes: number;
+  inProgress: boolean;
 }
 
 export interface Workout {

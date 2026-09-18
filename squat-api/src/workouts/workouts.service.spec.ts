@@ -6,8 +6,8 @@ import { WorkoutsService } from './workouts.service.js';
 
 describe('WorkoutsService', () => {
   const prisma = {
-    workout: { findFirst: jest.fn() },
-    workoutSession: { findFirst: jest.fn() },
+    workout: { findFirst: jest.fn(), findMany: jest.fn() },
+    workoutSession: { findFirst: jest.fn(), findMany: jest.fn() },
     program: { findFirst: jest.fn() },
   };
 
@@ -22,6 +22,17 @@ describe('WorkoutsService', () => {
       ],
     }).compile();
     service = module.get(WorkoutsService);
+  });
+
+  it('lists templates from the current users active program', async () => {
+    prisma.workout.findMany.mockResolvedValue([]);
+    prisma.workoutSession.findMany.mockResolvedValue([]);
+    await expect(service.listForUser('user-1')).resolves.toEqual([]);
+    expect(prisma.workout.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { program: { userId: 'user-1', isActive: true } },
+      }),
+    );
   });
 
   it('does not return another users workout', async () => {

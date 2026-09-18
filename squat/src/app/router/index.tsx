@@ -37,11 +37,17 @@ export const router = createBrowserRouter(
               },
             },
             {
-              path: "programs",
+              path: "library",
               lazy: async () => {
-                const { ProgramsPage } = await import("@/pages/ProgramPages");
-                return { Component: ProgramsPage };
+                const { LibraryPage } = await import("@/pages/LibraryPage");
+                return { Component: LibraryPage };
               },
+            },
+            {
+              path: "programs",
+              element: (
+                <Navigate to={`${paths.library}?tab=programs`} replace />
+              ),
             },
             {
               path: "programs/:programId",
@@ -72,10 +78,9 @@ export const router = createBrowserRouter(
             },
             {
               path: "exercises",
-              lazy: async () => {
-                const { ExercisesPage } = await import("@/pages/ExercisePages");
-                return { Component: ExercisesPage };
-              },
+              element: (
+                <Navigate to={`${paths.library}?tab=exercises`} replace />
+              ),
             },
             {
               path: "exercises/:exerciseId",
@@ -95,10 +100,9 @@ export const router = createBrowserRouter(
             },
             {
               path: "history",
-              lazy: async () => {
-                const { HistoryPage } = await import("@/pages/HistoryPage");
-                return { Component: HistoryPage };
-              },
+              element: (
+                <Navigate to={`${paths.progress}?tab=sessions`} replace />
+              ),
             },
             {
               path: "profile",

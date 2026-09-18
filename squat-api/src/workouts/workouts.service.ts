@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import type { WorkoutTemplateResponseDto } from './dto/workout-response.dto.js';
-import { toWorkoutTemplateDto } from './workout.mapper.js';
+import type {
+  WorkoutSummaryDto,
+  WorkoutTemplateResponseDto,
+} from './dto/workout-response.dto.js';
+import { toWorkoutSummaryDto, toWorkoutTemplateDto } from './workout.mapper.js';
 
 const workoutDetailInclude = {
   program: true,
@@ -14,6 +17,24 @@ const workoutDetailInclude = {
 @Injectable()
 export class WorkoutsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async listForUser(currentUserId: string): Promise<WorkoutSummaryDto[]> {
+    const [workouts, sessions] = await Promise.all([
+      this.prisma.workout.findMany({
+        where: { program: { userId: currentUserId, isActive: true } },
+        include: workoutDetailInclude,
+        orderBy: [{ program: { createdAt: 'desc' } }, { order: 'asc' }],
+      }),
+      this.prisma.workoutSession.findMany({
+        where: { userId: currentUserId, status: 'IN_PROGRESS' },
+        select: { workoutId: true },
+      }),
+    ]);
+    const inProgressIds = new Set(sessions.map((row) => row.workoutId));
+    return workouts.map((workout) =>
+      toWorkoutSummaryDto(workout, inProgressIds.has(workout.id)),
+    );
+  }
 
   async getById(
     workoutId: string,
@@ -66,10 +87,7 @@ export class WorkoutsService {
     return this.getById(next.id, currentUserId);
   }
 
-  async assertOwned(
-    workoutId: string,
-    currentUserId: string,
-  ): Promise<void> {
+  async assertOwned(workoutId: string, currentUserId: string): Promise<void> {
     await this.findOwnedWorkout(workoutId, currentUserId);
   }
 

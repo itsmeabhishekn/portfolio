@@ -83,6 +83,12 @@
   gap: var(--space-3);
 }
 
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .linkish {
   color: var(--color-accent);
   font: var(--text-secondary);

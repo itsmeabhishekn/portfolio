@@ -2,6 +2,7 @@ export const paths = {
   root: "/",
   login: "/login",
   dashboard: "/dashboard",
+  library: "/library",
   programs: "/programs",
   program: (programId: string) => `/programs/${programId}`,
   workoutTemplate: (workoutId: string) => `/workouts/${workoutId}`,

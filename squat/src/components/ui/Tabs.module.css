@@ -13,6 +13,9 @@
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--color-text-secondary);
+  font: var(--text-meta);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .selected {

@@ -14,6 +14,7 @@ import {
 import type {
   ExerciseResponseDto,
   WorkoutExerciseResponseDto,
+  WorkoutSummaryDto,
   WorkoutTemplateResponseDto,
 } from './dto/workout-response.dto.js';
 
@@ -56,13 +57,14 @@ export function toWorkoutExerciseDto(
   };
 }
 
-export function toWorkoutTemplateDto(
+export function toWorkoutSummaryDto(
   workout: WorkoutWithRelations,
   inProgress: boolean,
-): WorkoutTemplateResponseDto {
-  const exercises = workout.workoutExercises.map(toWorkoutExerciseDto);
+): WorkoutSummaryDto {
   const muscleGroups = uniqueMuscleGroups(
-    exercises.map((item) => item.exercise.primaryMuscleGroup),
+    workout.workoutExercises.map((item) =>
+      toApiMuscleGroup(item.exercise.primaryMuscleGroup),
+    ),
   );
 
   return {
@@ -76,9 +78,19 @@ export function toWorkoutTemplateDto(
       description: workout.program.description,
     },
     muscleGroups,
-    exerciseCount: exercises.length,
+    exerciseCount: workout.workoutExercises.length,
     estimatedMinutes: estimateWorkoutMinutes(workout.workoutExercises),
     inProgress,
-    exercises,
+  };
+}
+
+export function toWorkoutTemplateDto(
+  workout: WorkoutWithRelations,
+  inProgress: boolean,
+): WorkoutTemplateResponseDto {
+  const summary = toWorkoutSummaryDto(workout, inProgress);
+  return {
+    ...summary,
+    exercises: workout.workoutExercises.map(toWorkoutExerciseDto),
   };
 }

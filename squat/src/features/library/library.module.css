@@ -1,0 +1,70 @@
+.catalog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.region {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.regionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.regionTitle {
+  font: var(--text-section);
+}
+
+.focus {
+  padding: var(--space-3) var(--space-5) var(--space-2);
+}
+
+.focus + .focus {
+  border-top: 1px solid var(--color-border);
+}
+
+.focusTitle {
+  margin-bottom: var(--space-1);
+  color: var(--color-text-secondary);
+  font: var(--text-meta);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lifts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lift {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--touch);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.lifts li:last-child .lift {
+  border-bottom: 0;
+}
+
+.liftName {
+  font: var(--text-exercise);
+}
+
+.liftMeta {
+  flex-shrink: 0;
+  color: var(--color-text-meta);
+  font: var(--text-meta);
+}

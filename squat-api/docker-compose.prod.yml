@@ -32,3 +32,15 @@ services:
     profiles:
       - migrate
     restart: "no"
+
+  import-program:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: importer
+    image: squat-api-import:latest
+    env_file:
+      - .env
+    profiles:
+      - import
+    restart: "no"

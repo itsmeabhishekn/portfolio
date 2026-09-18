@@ -36,7 +36,7 @@ function requiredArg(name: string): string {
   const value = optionalArg(name);
   if (!value) {
     throw new Error(
-      'Usage: npm run program:import -- --email you@example.com [--file path.json]',
+      'Usage: --email you@example.com [--file path.json]',
     );
   }
   return value;

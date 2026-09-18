@@ -60,10 +60,18 @@ The first migration creates the relational schema. The second adds a partial uni
 
 There is no automatic seed. Users are created by Google sign-in with no workouts attached. `GET /workouts/upcoming` returns 404 until that user has a program. Test fixtures live in `test/fixtures/` and are excluded from the production build.
 
-To attach the personal split after you have signed in once:
+To attach the personal split after you have signed in once.
+
+On a machine with Node (local):
 
 ```bash
 npm run program:import -- --email you@example.com
+```
+
+On the API host (no Node required):
+
+```bash
+./scripts/import-program-prod.sh you@example.com
 ```
 
 The catalog is `data/programs/hypertrophy-stability.json`. Edit that file and re-run the command. Unused templates are replaced in place. If the program already has sessions, the importer writes a new active version and leaves history on the old one. It never creates a user.

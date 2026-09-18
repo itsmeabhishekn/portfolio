@@ -1,10 +1,15 @@
-import { notFound } from "@/services/api/client";
+import { apiRequest } from "@/services/api/client";
+import { parseExercise, parseExerciseList } from "@/services/api/map";
 import type { Exercise } from "@/types/domain";
 
-export function listExercises(): Promise<readonly Exercise[]> {
-  return Promise.resolve([]);
+export async function listExercises(): Promise<readonly Exercise[]> {
+  return apiRequest("/exercises", {
+    parse: parseExerciseList,
+  });
 }
 
-export function getExercise(exerciseId: string): Promise<Exercise> {
-  return Promise.reject(notFound("Exercise", exerciseId));
+export async function getExercise(exerciseId: string): Promise<Exercise> {
+  return apiRequest(`/exercises/${exerciseId}`, {
+    parse: parseExercise,
+  });
 }

@@ -4,7 +4,7 @@ Isolated fitness tracking frontend. It does not share code, styles, or routing w
 
 ## Local development
 
-Sign-in, the upcoming workout, templates, and the active session talk to the NestJS API. History, progress, programs, and the exercise catalog have no API yet and render empty states.
+Sign-in, the upcoming workout, templates, the active session, and the exercise catalog talk to the NestJS API. History, progress, and programs still render empty states.
 
 Copy `.env.example` to `.env`. Both values are required, and the build fails without them:
 

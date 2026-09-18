@@ -3,6 +3,7 @@ import { Spinner } from "@/components/feedback/Spinner";
 import { Card, EmptyState, PageHeader } from "@/components/ui";
 import { paths } from "@/config/paths";
 import { useAsyncValue } from "@/hooks/useAsyncValue";
+import { formatMuscleGroup } from "@/lib/workoutMeta";
 import { api } from "@/services/api";
 import styles from "./pages.module.css";
 
@@ -21,7 +22,7 @@ export function ExercisesPage() {
     return (
       <EmptyState
         title="No exercises"
-        body="The exercise library is empty until programs exist."
+        body="The catalog is empty until the taxonomy is imported."
       />
     );
   }
@@ -33,7 +34,7 @@ export function ExercisesPage() {
         <Card key={exercise.id}>
           <h2 className="t-exercise">{exercise.name}</h2>
           <p className="t-secondary">
-            {exercise.muscleGroup} · {exercise.equipment}
+            {formatMuscleGroup(exercise.muscleGroup)} · {exercise.equipment}
           </p>
           <Link className={styles.linkish} to={paths.exercise(exercise.id)}>
             History
@@ -66,7 +67,7 @@ export function ExerciseDetailPage() {
       <PageHeader
         eyebrow={data.equipment}
         title={data.name}
-        description={`${data.muscleGroup} · personal records and session history will expand here.`}
+        description={`${formatMuscleGroup(data.muscleGroup)} · personal records and session history will expand here.`}
       />
     </div>
   );

@@ -178,7 +178,7 @@ function toRepTarget(repMin: number, repMax: number): RepTarget {
   return { min: repMin, max: repMax };
 }
 
-function parseExercise(value: unknown): Exercise {
+export function parseExercise(value: unknown): Exercise {
   if (!isRecord(value)) {
     throw unexpected("exercise");
   }
@@ -191,6 +191,13 @@ function parseExercise(value: unknown): Exercise {
     ),
     equipment: asEquipment(value.equipment, "exercise.equipment"),
   };
+}
+
+export function parseExerciseList(value: unknown): Exercise[] {
+  if (!Array.isArray(value)) {
+    throw unexpected("exercises");
+  }
+  return value.map(parseExercise);
 }
 
 function parseWorkoutExercise(

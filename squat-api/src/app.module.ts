@@ -9,6 +9,7 @@ import { DatabaseModule } from './database/database.module.js';
 import { HealthModule } from './health/health.module.js';
 import { WorkoutSessionsModule } from './workout-sessions/workout-sessions.module.js';
 import { WorkoutsModule } from './workouts/workouts.module.js';
+import { ExercisesModule } from './exercises/exercises.module.js';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { WorkoutsModule } from './workouts/workouts.module.js';
     HealthModule,
     WorkoutsModule,
     WorkoutSessionsModule,
+    ExercisesModule,
   ],
   providers: [
     {

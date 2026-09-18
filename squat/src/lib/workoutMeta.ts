@@ -7,6 +7,8 @@ const MUSCLE_LABELS: Record<MuscleGroup, string> = {
   quads: "Quads",
   hamstrings: "Hamstrings",
   glutes: "Glutes",
+  adductors: "Adductors",
+  calves: "Calves",
   arms: "Arms",
   core: "Core",
   full_body: "Full body",

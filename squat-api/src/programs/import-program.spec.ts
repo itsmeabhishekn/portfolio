@@ -48,7 +48,8 @@ function fakeTx(options?: {
 }): Prisma.TransactionClient {
   return {
     exercise: {
-      upsert: jest.fn(async () => ({
+      findUnique: jest.fn(async () => null),
+      create: jest.fn(async () => ({
         id: 'exercise-1',
         name: 'Lat Pulldown',
       })),

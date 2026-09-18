@@ -30,6 +30,14 @@ export function toExerciseDto(exercise: Exercise): ExerciseResponseDto {
     primaryMuscleGroup: toApiMuscleGroup(exercise.primaryMuscleGroup),
     secondaryMuscleGroups: exercise.secondaryMuscleGroups.map(toApiMuscleGroup),
     equipment: toApiEquipment(exercise.equipment),
+    catalogKey: exercise.catalogKey ?? null,
+    region: exercise.region ?? null,
+    focus: exercise.focus ?? null,
+    targetSubdivision: exercise.targetSubdivision ?? null,
+    movementPattern: exercise.movementPattern ?? null,
+    mechanics: exercise.mechanics ?? null,
+    aclFriendly: exercise.aclFriendly ?? null,
+    shoulderImpingementRisk: exercise.shoulderImpingementRisk ?? null,
   };
 }
 

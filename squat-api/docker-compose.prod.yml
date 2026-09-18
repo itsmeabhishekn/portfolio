@@ -44,3 +44,16 @@ services:
     profiles:
       - import
     restart: "no"
+
+  import-exercises:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: importer
+    image: squat-api-import:latest
+    env_file:
+      - .env
+    profiles:
+      - import
+    entrypoint: ["npx", "--no-install", "tsx", "scripts/import-exercises.ts"]
+    restart: "no"

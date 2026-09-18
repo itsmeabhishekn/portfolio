@@ -131,17 +131,24 @@ async function upsertExercises(
 ): Promise<Map<string, string>> {
   const ids = new Map<string, string>();
   for (const exercise of catalog.exercises) {
-    const data = {
-      description: exercise.description,
-      primaryMuscleGroup: fromApiMuscleGroup(exercise.primaryMuscleGroup),
-      secondaryMuscleGroups:
-        exercise.secondaryMuscleGroups.map(fromApiMuscleGroup),
-      equipment: fromApiEquipment(exercise.equipment),
-    };
-    const row = await tx.exercise.upsert({
+    const existing = await tx.exercise.findUnique({
       where: { name: exercise.name },
-      create: { name: exercise.name, ...data },
-      update: data,
+      select: { id: true, name: true },
+    });
+    if (existing) {
+      ids.set(existing.name, existing.id);
+      continue;
+    }
+
+    const row = await tx.exercise.create({
+      data: {
+        name: exercise.name,
+        description: exercise.description,
+        primaryMuscleGroup: fromApiMuscleGroup(exercise.primaryMuscleGroup),
+        secondaryMuscleGroups:
+          exercise.secondaryMuscleGroups.map(fromApiMuscleGroup),
+        equipment: fromApiEquipment(exercise.equipment),
+      },
       select: { id: true, name: true },
     });
     ids.set(row.name, row.id);

@@ -14,6 +14,8 @@ enum MuscleGroup {
   QUADS
   HAMSTRINGS
   GLUTES
+  ADDUCTORS
+  CALVES
   ARMS
   CORE
   FULL_BODY
@@ -84,14 +86,22 @@ model Workout {
 }
 
 model Exercise {
-  id                    String        @id @default(uuid()) @db.Uuid
-  name                  String        @unique
-  description           String?
-  primaryMuscleGroup    MuscleGroup   @map("primary_muscle_group")
-  secondaryMuscleGroups MuscleGroup[] @map("secondary_muscle_groups")
-  equipment             Equipment
-  createdAt             DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt             DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id                      String        @id @default(uuid()) @db.Uuid
+  name                    String        @unique
+  description             String?
+  primaryMuscleGroup      MuscleGroup   @map("primary_muscle_group")
+  secondaryMuscleGroups   MuscleGroup[] @map("secondary_muscle_groups")
+  equipment               Equipment
+  catalogKey              String?       @unique @map("catalog_key")
+  region                  String?
+  focus                   String?
+  targetSubdivision       String?       @map("target_subdivision")
+  movementPattern         String?       @map("movement_pattern")
+  mechanics               String?
+  aclFriendly             Boolean?      @map("acl_friendly")
+  shoulderImpingementRisk String?       @map("shoulder_impingement_risk")
+  createdAt               DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt               DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   workoutExercises WorkoutExercise[]
   sessionExercises SessionExercise[]

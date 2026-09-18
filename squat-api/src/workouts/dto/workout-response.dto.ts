@@ -1,8 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import type {
-  ApiEquipment,
-  ApiMuscleGroup,
-} from '../../common/domain-map.js';
+import type { ApiEquipment, ApiMuscleGroup } from '../../common/domain-map.js';
 
 export class ExerciseResponseDto {
   @ApiProperty()
@@ -22,6 +19,30 @@ export class ExerciseResponseDto {
 
   @ApiProperty({ example: 'barbell' })
   equipment: ApiEquipment;
+
+  @ApiPropertyOptional()
+  catalogKey: string | null;
+
+  @ApiPropertyOptional()
+  region: string | null;
+
+  @ApiPropertyOptional()
+  focus: string | null;
+
+  @ApiPropertyOptional()
+  targetSubdivision: string | null;
+
+  @ApiPropertyOptional()
+  movementPattern: string | null;
+
+  @ApiPropertyOptional()
+  mechanics: string | null;
+
+  @ApiPropertyOptional()
+  aclFriendly: boolean | null;
+
+  @ApiPropertyOptional()
+  shoulderImpingementRisk: string | null;
 }
 
 export class ProgramSummaryDto {

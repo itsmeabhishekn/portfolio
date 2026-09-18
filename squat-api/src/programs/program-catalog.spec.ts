@@ -84,7 +84,7 @@ describe('parseProgramCatalog', () => {
     const muscle = validCatalog() as unknown as {
       exercises: { primaryMuscleGroup: string }[];
     };
-    muscle.exercises[0]!.primaryMuscleGroup = 'calves';
+    muscle.exercises[0]!.primaryMuscleGroup = 'neck';
     expect(() => parseProgramCatalog(muscle)).toThrow(/muscle group/);
 
     const reps = validCatalog();

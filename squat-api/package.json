@@ -15,6 +15,7 @@
     "start:prod": "node dist/main.js",
     "lint": "oxlint src/ test/ prisma/ scripts/",
     "program:import": "tsx --env-file=.env scripts/import-program.ts",
+    "exercises:import": "tsx --env-file=.env scripts/import-exercises.ts",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --config ./jest.config.ts --testMatch '<rootDir>/src/**/*.spec.ts'",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch --config ./jest.config.ts --testMatch '<rootDir>/src/**/*.spec.ts'",
     "test:e2e": "NODE_OPTIONS=--experimental-vm-modules jest --config ./jest.config.ts --testMatch '<rootDir>/test/**/*.e2e-spec.ts' --runInBand",

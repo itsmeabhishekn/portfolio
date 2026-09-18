@@ -22,6 +22,8 @@ const MUSCLE_GROUPS: readonly MuscleGroup[] = [
   "quads",
   "hamstrings",
   "glutes",
+  "adductors",
+  "calves",
   "arms",
   "core",
   "full_body",

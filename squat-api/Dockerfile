@@ -27,8 +27,12 @@ RUN npx --no-install prisma generate
 COPY src/common ./src/common
 COPY src/programs/import-program.ts ./src/programs/import-program.ts
 COPY src/programs/program-catalog.ts ./src/programs/program-catalog.ts
+COPY src/programs/import-exercises.ts ./src/programs/import-exercises.ts
+COPY src/programs/exercise-catalog.ts ./src/programs/exercise-catalog.ts
 COPY scripts/import-program.ts ./scripts/import-program.ts
+COPY scripts/import-exercises.ts ./scripts/import-exercises.ts
 COPY data/programs ./data/programs
+COPY data/exercises ./data/exercises
 ENTRYPOINT ["npx", "--no-install", "tsx", "scripts/import-program.ts"]
 
 FROM node:22-alpine AS runner

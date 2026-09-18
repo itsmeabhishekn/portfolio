@@ -60,6 +60,18 @@ The first migration creates the relational schema. The second adds a partial uni
 
 There is no automatic seed. Users are created by Google sign-in with no workouts attached. `GET /workouts/upcoming` returns 404 until that user has a program. Test fixtures live in `test/fixtures/` and are excluded from the production build.
 
+The shared exercise catalog is `data/exercises/taxonomy.json`. Load it before the program (it is global, not per-user):
+
+```bash
+npm run exercises:import
+```
+
+On the API host:
+
+```bash
+./scripts/import-exercises-prod.sh
+```
+
 To attach the personal split after you have signed in once.
 
 On a machine with Node (local):
@@ -74,7 +86,7 @@ On the API host (no Node required):
 ./scripts/import-program-prod.sh you@example.com
 ```
 
-The catalog is `data/programs/hypertrophy-stability.json`. Edit that file and re-run the command. Unused templates are replaced in place. If the program already has sessions, the importer writes a new active version and leaves history on the old one. It never creates a user.
+The program catalog is `data/programs/hypertrophy-stability.json`. Edit that file and re-run the command. Unused templates are replaced in place. If the program already has sessions, the importer writes a new active version and leaves history on the old one. It never creates a user. Program import will not overwrite taxonomy rows that already exist by name.
 
 ## Run
 

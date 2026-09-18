@@ -12,6 +12,8 @@ export type ApiMuscleGroup =
   | 'quads'
   | 'hamstrings'
   | 'glutes'
+  | 'adductors'
+  | 'calves'
   | 'arms'
   | 'core'
   | 'full_body';
@@ -28,6 +30,8 @@ const MUSCLE_TO_API: Record<MuscleGroup, ApiMuscleGroup> = {
   QUADS: 'quads',
   HAMSTRINGS: 'hamstrings',
   GLUTES: 'glutes',
+  ADDUCTORS: 'adductors',
+  CALVES: 'calves',
   ARMS: 'arms',
   CORE: 'core',
   FULL_BODY: 'full_body',
@@ -55,6 +59,8 @@ const API_TO_MUSCLE = {
   quads: 'QUADS',
   hamstrings: 'HAMSTRINGS',
   glutes: 'GLUTES',
+  adductors: 'ADDUCTORS',
+  calves: 'CALVES',
   arms: 'ARMS',
   core: 'CORE',
   full_body: 'FULL_BODY',

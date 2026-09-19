@@ -11,7 +11,7 @@ if [[ ! -f "$INDEX" ]]; then
   exit 1
 fi
 
-for route in login dashboard programs exercises progress history profile; do
+for route in login dashboard programs exercises progress history profile library workouts workout; do
   mkdir -p "$ROOT/out/squat/${route}"
   cp "$INDEX" "$ROOT/out/squat/${route}/index.html"
 done

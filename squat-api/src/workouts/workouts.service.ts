@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service.js';
 import type {
@@ -83,7 +79,7 @@ export class WorkoutsService {
   async skipUpcoming(
     currentUserId: string,
   ): Promise<WorkoutTemplateResponseDto> {
-    await this.assertNoInProgress(currentUserId);
+    await this.abandonOpenSessions(currentUserId);
     const program = await this.loadActiveProgram(currentUserId);
     if (!program || program.workouts.length === 0) {
       throw new NotFoundException('No upcoming workout');
@@ -104,7 +100,7 @@ export class WorkoutsService {
     currentUserId: string,
     workoutId: string,
   ): Promise<WorkoutTemplateResponseDto> {
-    await this.assertNoInProgress(currentUserId);
+    await this.abandonOpenSessions(currentUserId);
     const program = await this.loadActiveProgram(currentUserId);
     if (!program || program.workouts.length === 0) {
       throw new NotFoundException('No upcoming workout');
@@ -251,16 +247,11 @@ export class WorkoutsService {
     });
   }
 
-  private async assertNoInProgress(currentUserId: string): Promise<void> {
-    const active = await this.prisma.workoutSession.findFirst({
+  private async abandonOpenSessions(currentUserId: string): Promise<void> {
+    await this.prisma.workoutSession.updateMany({
       where: { userId: currentUserId, status: 'IN_PROGRESS' },
-      select: { id: true },
+      data: { status: 'ABANDONED' },
     });
-    if (active) {
-      throw new ConflictException(
-        'Finish the session in progress before skipping or changing days.',
-      );
-    }
   }
 
   private async findOwnedWorkout(workoutId: string, currentUserId: string) {

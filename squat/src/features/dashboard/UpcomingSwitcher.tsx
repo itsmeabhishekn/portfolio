@@ -9,9 +9,11 @@ import styles from "./upcoming-switcher.module.css";
 
 export function UpcomingSwitcher({
   currentId,
+  discardsSession = false,
   onChanged,
 }: {
   currentId: string;
+  discardsSession?: boolean;
   onChanged: (next: WorkoutDetail) => void;
 }) {
   const { pushToast } = useToast();
@@ -25,6 +27,14 @@ export function UpcomingSwitcher({
 
   const skip = async () => {
     if (busy) {
+      return;
+    }
+    if (
+      discardsSession &&
+      !window.confirm(
+        "Skip this day? Sets already logged in this session will be discarded.",
+      )
+    ) {
       return;
     }
     setPending("skip");
@@ -66,6 +76,14 @@ export function UpcomingSwitcher({
       setOpen(false);
       return;
     }
+    if (
+      discardsSession &&
+      !window.confirm(
+        "Switch days? Sets already logged in this session will be discarded.",
+      )
+    ) {
+      return;
+    }
     setPending("choose");
     try {
       const next = await api.workouts.chooseUpcoming(workoutId);
@@ -94,7 +112,7 @@ export function UpcomingSwitcher({
             void skip();
           }}
         >
-          {pending === "skip" ? "Skipping…" : "Skip"}
+          {pending === "skip" ? "Skipping…" : "Skip day"}
         </Button>
         <Button
           variant="secondary"
@@ -103,7 +121,7 @@ export function UpcomingSwitcher({
             void openChooser();
           }}
         >
-          Change
+          Change day
         </Button>
       </div>
 

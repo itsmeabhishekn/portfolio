@@ -7,7 +7,11 @@ import { WorkoutsService } from './workouts.service.js';
 describe('WorkoutsService', () => {
   const prisma = {
     workout: { findFirst: jest.fn(), findMany: jest.fn() },
-    workoutSession: { findFirst: jest.fn(), findMany: jest.fn() },
+    workoutSession: {
+      findFirst: jest.fn(),
+      findMany: jest.fn(),
+      updateMany: jest.fn(),
+    },
     program: { findFirst: jest.fn(), update: jest.fn() },
   };
 
@@ -54,6 +58,7 @@ describe('WorkoutsService', () => {
   it('skips the shown day and queues the next template', async () => {
     let nextId = 'push';
     prisma.workoutSession.findFirst.mockResolvedValue(null);
+    prisma.workoutSession.updateMany.mockResolvedValue({ count: 0 });
     prisma.program.findFirst.mockImplementation(async () => ({
       id: 'p1',
       userId: 'user-1',
@@ -81,6 +86,10 @@ describe('WorkoutsService', () => {
 
     const result = await service.skipUpcoming('user-1');
     expect(result.id).toBe('pull');
+    expect(prisma.workoutSession.updateMany).toHaveBeenCalledWith({
+      where: { userId: 'user-1', status: 'IN_PROGRESS' },
+      data: { status: 'ABANDONED' },
+    });
     expect(prisma.program.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: { nextWorkoutId: 'pull', overrideWorkoutId: null },
@@ -90,6 +99,7 @@ describe('WorkoutsService', () => {
 
   it('chooses another day today without advancing the rotation cursor', async () => {
     prisma.workoutSession.findFirst.mockResolvedValue(null);
+    prisma.workoutSession.updateMany.mockResolvedValue({ count: 0 });
     prisma.program.findFirst.mockResolvedValue({
       id: 'p1',
       userId: 'user-1',

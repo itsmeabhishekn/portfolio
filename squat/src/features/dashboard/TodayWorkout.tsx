@@ -73,12 +73,11 @@ export function TodayWorkout({
         >
           {today.inProgress ? "Continue workout" : "Start workout"}
         </Button>
-        {today.inProgress ? null : (
-          <UpcomingSwitcher
-            currentId={today.workout.id}
-            onChanged={() => onUpcomingChanged()}
-          />
-        )}
+        <UpcomingSwitcher
+          currentId={today.workout.id}
+          discardsSession={today.inProgress}
+          onChanged={() => onUpcomingChanged()}
+        />
       </div>
     </section>
   );

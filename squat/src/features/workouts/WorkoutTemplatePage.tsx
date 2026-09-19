@@ -144,9 +144,10 @@ export function WorkoutTemplatePage() {
         </section>
       )}
 
-      {data.isUpcoming && !data.inProgress ? (
+      {data.isUpcoming ? (
         <UpcomingSwitcher
           currentId={data.workout.id}
+          discardsSession={data.inProgress}
           onChanged={(next) => {
             if (next.workout.id !== data.workout.id) {
               navigate(paths.workoutTemplate(next.workout.id), { replace: true });

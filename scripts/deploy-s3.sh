@@ -41,15 +41,18 @@ aws s3 sync out/_next/static "s3://${BUCKET}/_next/static" \
   --metadata-directive REPLACE
 
 # /squat/login (no trailing slash) is a missing S3 key and 403s unless this
-# object exists. Directory index.html covers the slash form.
+# object exists. Directory index.html covers the slash form. UUID routes such as
+# /squat/workout/:id still need the CloudFront Function rewrite.
 if [[ -f out/squat/index.html ]]; then
-  for route in login dashboard programs exercises progress history profile; do
+  for route in login dashboard programs exercises progress history profile library workouts workout; do
     aws s3 cp out/squat/index.html "s3://${BUCKET}/squat/${route}" \
       --region "$REGION" \
       --content-type "text/html; charset=utf-8" \
       --cache-control "public, max-age=0, must-revalidate"
   done
 fi
+
+bash "$ROOT/scripts/ensure-cloudfront-spa.sh"
 
 if [[ -n "$DIST" ]]; then
   aws cloudfront create-invalidation \

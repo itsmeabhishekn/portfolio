@@ -4,6 +4,7 @@ import { LoadError } from "@/components/feedback/LoadError";
 import { Skeleton } from "@/components/feedback/Spinner";
 import { Button } from "@/components/ui";
 import { paths } from "@/config/paths";
+import { UpcomingSwitcher } from "@/features/dashboard/UpcomingSwitcher";
 import { RestTimer } from "@/features/workouts/RestTimer";
 import { SetRow } from "@/features/workouts/SetRow";
 import {
@@ -232,6 +233,16 @@ export function ActiveWorkoutPage() {
           </p>
         ) : null}
       </header>
+
+      {inProgress && live.session.workoutId ? (
+        <UpcomingSwitcher
+          currentId={live.session.workoutId}
+          discardsSession
+          onChanged={(next) => {
+            navigate(paths.workoutTemplate(next.workout.id), { replace: true });
+          }}
+        />
+      ) : null}
 
       {block && !allLogged ? (
         <section className={styles.exercise} aria-label={block.exercise.name}>

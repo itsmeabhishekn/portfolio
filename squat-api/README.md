@@ -114,8 +114,8 @@ Product routes are prefixed with `/api/v1`. Health and Swagger are not.
 | `GET` | `/api/v1/programs/:programId` | One program and its workout templates |
 | `GET` | `/api/v1/workouts` | Workout templates on the active program |
 | `GET` | `/api/v1/workouts/upcoming` | Next planned workout for the current user |
-| `POST` | `/api/v1/workouts/upcoming/skip` | Skip the shown day; does not create a session |
-| `POST` | `/api/v1/workouts/upcoming/choose` | Train a different day today; queued day stays |
+| `POST` | `/api/v1/workouts/upcoming/skip` | Skip the shown day (abandons an open session; does not complete it) |
+| `POST` | `/api/v1/workouts/upcoming/choose` | Train a different day today; queued day stays. Abandons an open session. |
 | `GET` | `/api/v1/workouts/:workoutId` | Workout template (prescription only) |
 | `GET` | `/api/v1/workouts/:workoutId/sessions/in-progress` | Active session, or 404 |
 | `POST` | `/api/v1/workouts/:workoutId/sessions` | Start or resume a session |

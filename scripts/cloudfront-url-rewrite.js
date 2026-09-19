@@ -3,8 +3,8 @@ function handler(event) {
   var uri = request.uri;
 
   if (uri === "/squat" || uri.indexOf("/squat/") === 0) {
-    var squatFile = uri.split("/").pop();
-    if (uri === "/squat" || uri === "/squat/" || !squatFile.includes(".")) {
+    var last = uri.split("/").pop();
+    if (uri === "/squat" || uri === "/squat/" || last.indexOf(".") === -1) {
       request.uri = "/squat/index.html";
     }
     return request;
@@ -12,8 +12,11 @@ function handler(event) {
 
   if (uri.endsWith("/")) {
     request.uri = uri + "index.html";
-  } else if (!uri.split("/").pop().includes(".")) {
-    request.uri = uri + "/index.html";
+  } else {
+    var file = uri.split("/").pop();
+    if (file.indexOf(".") === -1) {
+      request.uri = uri + "/index.html";
+    }
   }
 
   return request;
